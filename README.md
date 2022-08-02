@@ -2,7 +2,7 @@ Moodle Course Format "Buttonsx"
 ===============================
 
 Buttonsx is a course format based on the Buttons format that creates a menu with buttons to access the sections, one by one.
-Buttonx adds an optional menu at the bottom of site / at the end of a section.
+Buttonsx adds an optional menu at the bottom of site / at the end of a section.
 
 Features
 ---------
