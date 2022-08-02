@@ -36,7 +36,7 @@ Usage
 
 Documentation
 --------------
-You can read the [Documentation page] for the button format (https://docs.moodle.org/31/en/Buttons_course_format) at Moodle.org
+You can read the [Documentation page] for the 'Buttons format' (https://docs.moodle.org/31/en/Buttons_course_format) at Moodle.org
 
 About
 ------
