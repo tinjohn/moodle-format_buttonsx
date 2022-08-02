@@ -43,3 +43,8 @@ About Buttons
 * [Rodrigo Brandão](https://github.com/brandaorodrigo) (author)
 * [Moodle plugin page](https://moodle.org/plugins/format_buttons) at Moodle.org
 * [Plugin project](https://github.com/brandaorodrigo/moodle-format_buttons) at GitHub.com
+
+About Buttonsx
+---------------
+* [Tina John](https://github.com/tinjohn) (author)
+* [Plugin project](https://github.com/tinjohn/moodle-format_buttonsx) at GitHub.com
