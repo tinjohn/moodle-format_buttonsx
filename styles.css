@@ -1,0 +1,270 @@
+/*
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * format_buttonsx_renderer
+ *
+ * @package    format_buttonsx
+ * @author     Tina John
+ * @author     based on the work of Rodrigo Brandão <https://www.linkedin.com/in/brandaorodrigo>
+ * @copyright  2022 Tina John <johnt.22.tijo@gmail.com>
+ * @copyright  2020 Rodrigo Brandão <rodrigo.brandao.contato@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+.course-content ul.buttons {
+    margin: 0;
+    list-style: none;
+}
+
+.course-content ul.buttons li.section .content {
+    margin: 0 40px;
+}
+
+.course-content ul.buttons li.section .left,
+.course-content ul.buttons li.section .right {
+    width: 40px;
+    padding: 0 6px;
+}
+
+.course-content ul.buttons li.section .left {
+    padding-top: 22px;
+    text-align: right;
+}
+
+.jsenabled .course-content ul.buttons li.section .left,
+.jsenabled .course-content ul.buttons li.section .right {
+    width: auto;
+}
+
+.course-content ul.buttons li.section .left .section-handle img.icon {
+    padding: 0;
+    vertical-align: baseline;
+}
+
+.course-content ul.buttons li.section .section_action_menu .textmenu,
+.course-content ul.buttons li.section .section_action_menu .menu-action-text {
+    white-space: nowrap;
+}
+
+.course-content ul.buttons li.section.main:not(#section-0) {
+    background: none;
+    list-style: none;
+    display: none;
+    border: 0 !important;
+}
+
+#buttonsectioncontainer, #bottombuttonsectioncontainer {
+    display: none;
+    margin: 20px auto;
+}
+
+/* ADDED */
+#buttonsectioncontainer, #bottombuttonsectioncontainer {
+    --button-viscol: #1177d1;
+    /* background: #115898; */
+    --button-currcol: #115898;
+    --button-bgcol: #dee3e8;
+    --button-fgcol: #7a8188;
+
+    --button-grey: #dee3e8;
+    --button-viscol7: #115898;
+    --button-viscol6: #427563;
+    --button-viscol5: #9e0115;
+    --button-viscol4: #617999;
+    --button-viscol2: #DBF2FF;
+    --button-viscol3: #87AEE1;
+}
+/* END ADDED */
+
+#buttonsectioncontainer .buttonsection {
+    background: var(--button-bgcol); /* CHANGED */
+    color: var(--button-fgcol); /* CHANGED */
+    display: inline-block;
+    text-align: center;
+    width: 48px;
+    line-height: 48px;
+    height: 48px;
+    overflow: hidden;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+    font-weight: 700;
+    margin: 0 5px 10px 5px;
+    vertical-align: top;
+}
+
+
+#buttonsectioncontainer.circle .buttonsection {
+    border-radius: 100%;
+}
+#bottombuttonsectioncontainer.circle .buttonsection {
+    border-radius: 100%;
+}
+
+#buttonsectioncontainer .buttonsection:hover {
+    /* background: #bac1c5; */
+    border: 2px solid;
+    color: #fff;
+}
+
+#buttonsectioncontainer .buttonsection.sectionhidden {
+    width: 53px;
+    height: 53px;
+    line-height: 50px;
+    border: 2px solid;
+    background: none;
+    cursor: default;
+    color: #b7bdc3;
+    border-color: #d3d9df;
+}
+
+#buttonsectioncontainer .divisorsection {
+    display: inline-block;
+    padding: 0;
+    overflow-y: hidden;
+    height: 52px;
+    margin: 0 4px 10px 25px;
+}
+
+#buttonsectioncontainer .divisortext {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 18px;
+    overflow-y: hidden;
+    height: 52px;
+    text-align: right;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+/* colors */
+#buttonsectioncontainer .buttonsection.current {
+    /* background: #115898; */
+    background: var(--button-currcol); /* CHANGED */
+
+    color: #fff;
+}
+
+#buttonsectioncontainer .buttonsection.sectionvisible {
+    background: var(--button-viscol);
+    color: #fff;
+    border-color: var(--button-viscol);
+}
+
+
+
+
+/* ADDED bottom menu */
+
+#bottombuttonsectioncontainer {
+  --ent-height: 30px;
+  --arrow-height: 20px;
+  --half-diff: calc((var(--ent-height) - var(--arrow-height))/ 2);
+  /*
+  var(--ent-height)
+  var(--arrow-height)
+  var(--half-diff)
+  */
+}
+
+#bottombuttonsectioncontainer .buttonsection {
+    color: #7a8188;
+    display: inline-block;
+    text-align: center;
+    width: var(--ent-height);
+    line-height: var(--ent-height);
+    height: var(--ent-height);
+    overflow: hidden;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 0;
+    font-weight: 500;
+    vertical-align: top;
+    color: var(--button-viscol);
+}
+
+
+
+
+#bottombuttonsectioncontainer .buttonsection.sectionvisible {
+    background: var(--button-viscol);
+    color: #fff;
+}
+#bottombuttonsectioncontainer .buttonsection.sectionnotvisible {
+  display: none;
+}
+
+
+#bottombuttonsectioncontainer .buttonsection.sectionaftervisible.specialbgafter {
+  border-top-right-radius: 100%;
+  border-bottom-right-radius: 100%;
+  background-color: var(--button-bgcol);
+}
+#bottombuttonsectioncontainer .buttonsection.sectionbeforevisible.specialbgbefore {
+  border-top-left-radius: 100%;
+  border-bottom-left-radius: 100%;
+  background-color: var(--button-bgcol);
+}
+
+
+#bottombuttonsectioncontainer .buttonsection.sectionbeforevisible,
+#bottombuttonsectioncontainer .buttonsection.sectionaftervisible {
+    color: var(--button-fgcol);
+    color: #fff;
+    border-color: var(--button-fgcol);
+    margin: var(--half-diff) 15px;
+    width: calc(var(--arrow-height) * 1.3 );
+    height: var(--arrow-height);
+    border-radius: 0%;
+}
+
+#bottombuttonsectioncontainer .buttonsection.sectionbeforevisible {
+     border-top: calc(var(--arrow-height) / 2 ) solid transparent;
+     border-bottom:  calc(var(--arrow-height) / 2 ) solid transparent;
+     border-right: calc(var(--arrow-height) / 1.3) solid var(--button-viscol);
+}
+
+#bottombuttonsectioncontainer .buttonsection.sectionaftervisible {
+      border-top: calc(var(--arrow-height) / 2 ) solid transparent;
+      border-bottom: calc(var(--arrow-height) / 2 ) solid transparent;
+      border-left: calc(var(--arrow-height) / 1.3) solid var(--button-viscol);
+}
+
+#bottombuttonsectioncontainer .buttonsection.current {
+    /* background: #115898; */
+    border-right-color: var(--button-currcol) !important; /* CHANGED */
+    border-left-color: var(--button-currcol) !important; /* CHANGED */
+    color: #fff;
+}
+
+/* END ADDED */
+
+#buttonsectioncontainer .divisorsection.inlinebuttonsections {
+    display: inline;
+}
+
+#buttonsectioncontainer .divisorsection.inlinebuttonsections::before {
+    content: "\A";
+    white-space: pre;
+}
+
+/* editing */
+.editing .course-content ul.buttons li.section.main:not(#section-0) {
+    display: block;
+    border-bottom: 1px dotted #dee2e6 !important;
+}
