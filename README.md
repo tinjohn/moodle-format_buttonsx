@@ -38,8 +38,8 @@ Documentation
 --------------
 You can read the [Documentation page] for the 'Buttons format' (https://docs.moodle.org/31/en/Buttons_course_format) at Moodle.org
 
-About
-------
+About Buttons
+--------------
 * [Rodrigo Brandão](https://github.com/brandaorodrigo) (author)
-* [Moodle plugin page](https://moodle.org/plugins/format_buttonsx) at Moodle.org
-* [Plugin project](https://github.com/brandaorodrigo/moodle-format_buttonsx) at GitHub.com
+* [Moodle plugin page](https://moodle.org/plugins/format_buttons) at Moodle.org
+* [Plugin project](https://github.com/brandaorodrigo/moodle-format_buttons) at GitHub.com
