@@ -75,6 +75,6 @@ $string['square'] = 'Square';
 $string['inlinesections'] = 'Inline sections';
 $string['inlinesections_help'] = 'Give each section a new line.';
 // ADDED
-$string['usebottommenu'] = 'add bottom menu';
+$string['usebottommenu'] = 'Show bottom menu';
 $string['usebottommenu_help'] = 'An additional navigation menu at the end of each section.';
 // END ADDED

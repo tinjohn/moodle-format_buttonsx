@@ -73,19 +73,46 @@
 
 /* ADDED */
 #buttonsectioncontainer, #bottombuttonsectioncontainer {
-    --button-viscol: #1177d1;
-    /* background: #115898; */
-    --button-currcol: #115898;
-    --button-bgcol: #dee3e8;
-    --button-fgcol: #7a8188;
+  /* background: #115898; */
+
+    --button-viscol1: #1177d1;
+    --button-currcol1: #115898;
+    --button-bgcol1: #dee3e8;
+    --button-fgcol1: #7a8188;
+
 
     --button-grey: #dee3e8;
+    --button-viscol8: #7FB069;
     --button-viscol7: #115898;
     --button-viscol6: #427563;
     --button-viscol5: #9e0115;
     --button-viscol4: #617999;
     --button-viscol2: #DBF2FF;
     --button-viscol3: #87AEE1;
+
+    --button-viscol9: #08415C;
+    --button-currcol9: #F1BF98;
+
+    --button-viscol10: #6B818C;
+    --button-currcol10: #F1BF98;
+
+    --button-viscol11: #1C3144;
+    --button-currcol11: #FFBA08;
+
+    --button-viscol12: #083D77;
+    --button-currcol12: #EE964B;
+
+
+
+    --button-currcol2: #f08207;
+    --button-currcol8: #E6AA68;
+
+    --button-viscol: var(--button-viscol12);
+    --button-currcol: var(--button-currcol12);
+    --button-bgcol: var(--button-bgcol1);
+    --button-fgcol: var(--button-fgcol1);
+
+
 }
 /* END ADDED */
 

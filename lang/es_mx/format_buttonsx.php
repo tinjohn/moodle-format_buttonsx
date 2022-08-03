@@ -72,3 +72,10 @@ $string['circle'] = 'Circulo';
 $string['square'] = 'Plaza';
 $string['inlinesections'] = 'Secciones separadas en líneas';
 $string['inlinesections_help'] = 'Muestra cada sección en una línea.';
+// ADDED
+$string['usebottommenu'] = 'Mostrar la navegación abajo';
+$string['usebottommenu_help'] = 'Un menú de navegación adicional al final de cada sección.';
+// END ADDED
+
+
+Mostrar la navegación abajo

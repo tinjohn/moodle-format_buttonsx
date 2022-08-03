@@ -279,6 +279,43 @@ class format_buttonsx_renderer extends format_topics_renderer
         }
         return false;
       }
+
+      /**
+       * is_divi_previous_vis_section
+       *
+       * @return boolean
+       */
+       protected function is_divi_previous_vis_section ($course, $sectionnr, $count, $currentdivisor) {
+         if (!isset($course->{'divisor' . $currentdivisor})) {
+           return false;
+         }
+         $modinfo = get_fast_modinfo($course);
+         $thissection = $modinfo->get_section_info($sectionnr);
+         if(!$thissection->visible) {
+           return false;
+         }
+         // section navigator wants to know if there was any section left till the divisor
+         $cntsectionnr = $sectionnr;
+         $ki = 1;
+         $allhidden = true;
+         for ($k = $count; $k < ($course->{'divisor' . $currentdivisor}); $k++) {
+           $cntsectionnr = $sectionnr + $ki;
+           $cnt_invis = 0;
+           $thissection = $modinfo->get_section_info($cntsectionnr);
+           if($thissection->visible) {
+              return false;
+           } else {
+             $cnt_invis++;
+           }
+           $ki++;
+         }
+         if($cnt_invis > 0) {
+           return true;
+         }
+         return false;
+       }
+
+
       // END ADDED
 
 
@@ -335,9 +372,10 @@ class format_buttonsx_renderer extends format_topics_renderer
         $inline = '';
         $lasthidden = false;
         $hidden = false;
+        $lasthiddencnt = 0;
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {
             if($hidden) {
-              $lasthidden = true;
+              $lasthiddencnt = $lasthiddencnt + 1;
             }
             $hidden = false;
             if ($section == 0) {
@@ -353,6 +391,7 @@ class format_buttonsx_renderer extends format_topics_renderer
                 $count > $course->{'divisor' . $currentdivisor}) {
                 $currentdivisor++;
                 $count = 1;
+                $lasthiddencnt = 0;
             }
 
             $id = 'bottombuttonsection-' . $section;
@@ -413,11 +452,19 @@ class format_buttonsx_renderer extends format_topics_renderer
             //   $arspan = html_writer::tag('div', "", ['id' => '', 'class' => 'divisorline']);
             //    $name = $arspan.''.$name;
             // }
-            if($count == 1) {
+
+            // ADDED
+            // if hidden
+            //
+            if($count == (1 + $lasthiddencnt)) {
               $class .= ' specialbgafter';
-            }
-            if ($count == $course->{'divisor' . $currentdivisor}) {
+            } elseif ($count == ($course->{'divisor' . $currentdivisor})) {
               $class .= ' specialbgbefore';
+              // der davor müsste schon wissen, dass er hidden ist
+            } else {
+              if ($this->is_divi_previous_vis_section($course, $section, $count, $currentdivisor)) {
+                $class .= ' specialbgbefore';
+              }
             }
 
             if ($course->marker == $section) {
