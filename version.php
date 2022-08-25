@@ -30,5 +30,5 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->requires = 2015111600; /* moodle 3.0 */
 $plugin->component = 'format_buttonsx';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.x';
-$plugin->version = 2022080101;
+$plugin->release = 'v2';
+$plugin->version = 2022082501;
