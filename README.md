@@ -2,7 +2,7 @@ Moodle Course Format "Buttonsx"
 ===============================
 
 Buttonsx is a course format based on the [Buttons format](https://moodle.org/plugins/format_buttons) that creates a menu with buttons per section to access the sections, one by one with the additional opportunity to group sections.
-Buttonsx adds an optional menu at the bottom of site / at the end of a section.
+Buttonsx adds an optional menu at the bottom of site / at the end of a section and enables optional hiding of h5p icons and links.
 
 Features of the Buttons Format
 -------------------------------
@@ -22,18 +22,21 @@ Installation
 
 Usage
 ------
+* for buttons 
 1. When creating a new course, select 'Buttons format' in the 'Course format' dropdown menu.
 2. To select the format, simply choose it from the list of course formats in the course settings.
 3. Choose the number of sections, or leave the default of 10 sections.
 4. Choose where you want the first (zero) section (which has the default 'Announcements' forum) positioned: Either 'Above the list buttons' or 'Below the visible section'.
-5. Select the sequential rule. You can uses the count original of the topics, or chose to reset the count to each new grouping.
+5. Select the sequential rule. You can use the count original of the topics, or chose to reset the count to each new grouping.
 6. Select the list-style in numbers, alphabet or roman numeral.
 7. Write the titles for all the groupings you will use and the number of sections that each one will have. If a group has only one section, the icon will be (...).
 8. Write the hexadecimal color for the current section button and the visible section button, or leave it empty to use the default value.
+* for buttonsx additional features
+9. select options from the given list
 
 Documentation
 --------------
-You can read the [Documentation page] for the 'Buttons format' (https://docs.moodle.org/31/en/Buttons_course_format) at Moodle.org
+You can read the [Documentation page for the 'Buttons format'](https://docs.moodle.org/31/en/Buttons_course_format) at Moodle.org
 
 About Buttons
 --------------
