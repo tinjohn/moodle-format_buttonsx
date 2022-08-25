@@ -20,14 +20,6 @@ Installation
 -------------
 * Download directory and install it using the moodle plugin install routine
 
-Manual Installation
---------------------
-1. You can manually download the zip file from the [Moodle Plugins Database](https://moodle.org/plugins/format_buttonsx).
-2. After downloading the zip file, expand it and put it's contents in your .../moodle/course/format/ directory.
-3. The folder name must be 'buttons'.
-4. Go to 'Admin ► Site administration ► Notifications' page.
-5. Follow the instructions inside the page to finish the installation.
-
 Usage
 ------
 1. When creating a new course, select 'Buttons format' in the 'Course format' dropdown menu.
