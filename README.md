@@ -1,7 +1,7 @@
 Moodle Course Format "Buttonsx"
 ===============================
 
-Buttonsx is a course format based on the [Buttons format](https://moodle.org/plugins/format_buttons) that creates a menu with buttons per section to access the sections, one by one with the additional opportunity to group sections. 
+Buttonsx is a course format based on the [Buttons format](https://moodle.org/plugins/format_buttons) that creates a menu with buttons per section to access the sections, one by one with the additional opportunity to group sections.
 Buttonsx adds an optional menu at the bottom of site / at the end of a section.
 
 Features of the Buttons Format
@@ -13,8 +13,8 @@ Features of the Buttons Format
 
 Additional Features by the Buttonsx Format
 --------------------------------------------
-* Arrow navigation at the bottom 
-* Option to hide h5p icons and links in the non editing mode (use case: h5p is embedded in it's own decription, thus is not hideable, result shows icon, link and h5p activity)
+* Arrow navigation at the bottom
+* Option to hide h5p icons and links in the non editing mode (use case: h5p is embedded in it's own description, thus is not hide-able, result shows icon, link and h5p activity)
 
 Installation
 -------------
