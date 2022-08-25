@@ -77,4 +77,6 @@ $string['inlinesections_help'] = 'Give each section a new line.';
 // ADDED
 $string['usebottommenu'] = 'Show bottom menu';
 $string['usebottommenu_help'] = 'An additional navigation menu at the end of each section.';
+$string['displayh5picons'] = 'Display (yes) h5p icon';
+$string['displayh5picons_help'] = "(no) hides the h5p icon and link in the course while not in editing mode. Useful for embedded h5p contents within it's own description, that is thus not able to be hidden.";
 // END ADDED

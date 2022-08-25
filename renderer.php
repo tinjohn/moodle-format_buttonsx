@@ -140,22 +140,32 @@ class format_buttonsx_renderer extends format_topics_renderer
             }
             ';
         }
+        // ADDED tina john 20220825
+        if (!$PAGE->user_is_editing() && !$course->displayh5picons) {
+          $css .=
+          '.h5pactivity .activityinstance {
+              display: none !important;
+            }';
+        }
+        // END ADDED
         if ($css) {
             $html .= html_writer::tag('style', $css);
         }
         $withoutdivisor = true;
         for ($k = 1; $k <= 12; $k++) {
-            if ($course->{'divisor' . $k}) {
+            if ($course->{'divisor' . $k} != 0) {
                 $withoutdivisor = false;
             }
         }
+
+
+        $modinfo = get_fast_modinfo($course);
         if ($withoutdivisor) {
-            $course->divisor1 = 999;
+            $course->divisor1 = array_key_last($modinfo->get_section_info_all());
         }
         $divisorshow = false;
         $count = 1;
         $currentdivisor = 1;
-        $modinfo = get_fast_modinfo($course);
         $inline = '';
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {
             if ($section == 0) {
@@ -357,14 +367,21 @@ class format_buttonsx_renderer extends format_topics_renderer
             $html .= html_writer::tag('style', $css);
         }
         $withoutdivisor = true;
+
+        // $course->divisor1  already set in the main menu
+        // but kept for further development maybe without main menu
         for ($k = 1; $k <= 12; $k++) {
-            if ($course->{'divisor' . $k}) {
+            if ($course->{'divisor' . $k} != 0) {
                 $withoutdivisor = false;
             }
         }
+
+        $modinfo = get_fast_modinfo($course);
         if ($withoutdivisor) {
-            $course->divisor1 = 999;
+            $course->divisor1 = array_key_last($modinfo->get_section_info_all());
+            $withoutdivisor = true;
         }
+
         $divisorshow = false;
         $count = 1;
         $currentdivisor = 1;
@@ -423,25 +440,11 @@ class format_buttonsx_renderer extends format_topics_renderer
                 $hidden = true;
             }
 
-
-                        // if ($sectionvisible == $section) {
-                        //     $class .= ' sectionvisible';
-                        // } elseif ($sectionvisible - 1 == $section) {
-                        //     $class .= ' sectionbeforevisible';
-                        // } elseif ($sectionvisible + 1  == $section) {
-                        //     $class .= ' sectionaftervisible';
-                        // } else {
-                        //   $class .= ' sectionnotvisible';
-                        // }
-
             if ($sectionvisible == $section) {
                 $class .= ' sectionvisible';
-            } elseif ($this->is_previous_vis_section($course, $sectionvisible, $section)) {
-                $class .= ' sectionbeforevisible';
-            } elseif ($this->is_next_vis_section($course, $sectionvisible, $section)) {
-                $class .= ' sectionaftervisible';
             } else {
-              $class .= ' sectionnotvisible';
+               // sectionbeforevisible arrows, sectionaftervisible arrows for divisor jump set by js init
+                $class .= ' sectionnotvisible';
             }
 
 
@@ -454,16 +457,19 @@ class format_buttonsx_renderer extends format_topics_renderer
             // }
 
             // ADDED
-            // if hidden
             //
-            if($count == (1 + $lasthiddencnt)) {
-              $class .= ' specialbgafter';
-            } elseif ($count == ($course->{'divisor' . $currentdivisor})) {
-              $class .= ' specialbgbefore';
-              // der davor müsste schon wissen, dass er hidden ist
-            } else {
-              if ($this->is_divi_previous_vis_section($course, $section, $count, $currentdivisor)) {
+            // $withoutdivisor is always false because first divisor is set for main
+            // to length of sections
+            if (!$withoutdivisor) {
+              if($count == (1 + $lasthiddencnt)) {
+                $class .= ' specialbgafter';
+              } elseif ($count == ($course->{'divisor' . $currentdivisor})) {
                 $class .= ' specialbgbefore';
+                // der davor müsste schon wissen, dass er hidden ist
+              } else {
+                if ($this->is_divi_previous_vis_section($course, $section, $count, $currentdivisor)) {
+                  $class .= ' specialbgbefore';
+                }
               }
             }
 

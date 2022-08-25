@@ -74,11 +74,16 @@ class format_buttonsx extends format_topics {
                 'default' => get_config('format_buttonsx', 'inlinesections'),
                 'type' => PARAM_INT,
             );
-
+            // ADDED tina john
             $courseformatoptions['usebottommenu'] = array(
                 'default' => get_config('format_buttonsx', 'usebottommenu'),
                 'type' => PARAM_INT,
             );
+            $courseformatoptions['displayh5picons'] = array(
+                'default' => get_config('format_buttonsx', 'displayh5picons'),
+                'type' => PARAM_INT,
+            );
+            // END ADDED
 
             $courseformatoptions['sequential'] = array(
                 'default' => get_config('format_buttonsx', 'sequential'),
@@ -188,7 +193,7 @@ class format_buttonsx extends format_topics {
                     ),
                 ),
             );
-
+            // ADDED
             // tinjohn 2022-07-29
             // option for bottom menu - defaults no
             $courseformatoptionsedit['usebottommenu'] = array(
@@ -204,6 +209,21 @@ class format_buttonsx extends format_topics {
                 ),
             );
 
+            // for h5picon displayed for users
+            $courseformatoptionsedit['displayh5picons'] = array(
+                'label' => get_string('displayh5picons', 'format_buttonsx'),
+                'help' => 'displayh5picons',
+                'help_component' => 'format_buttonsx',
+                'element_type' => 'select',
+                'element_attributes' => array(
+                    array(
+                        0 => get_string('no', 'format_buttonsx'),
+                        1 => get_string('yes', 'format_buttonsx'),
+                    ),
+                ),
+            );
+
+            // END ADDED
             $courseformatoptionsedit['inlinesections'] = array(
                 'label' => get_string('inlinesections', 'format_buttonsx'),
                 'help' => 'inlinesections',
