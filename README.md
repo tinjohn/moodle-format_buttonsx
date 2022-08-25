@@ -18,7 +18,7 @@ Additional Features by the Buttonsx Format
 
 Installation
 -------------
-* For recent Moodle versions, you can install this plugin automatically from the Moodle plugins database.
+* Download directory and install it using the moodle plugin install routine
 
 Manual Installation
 --------------------
