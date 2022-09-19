@@ -143,7 +143,7 @@ class format_buttonsx_renderer extends format_topics_renderer
         // ADDED tina john 20220825
         if (!$PAGE->user_is_editing() && !$course->displayh5picons) {
           $css .=
-          '.h5pactivity .activityinstance {
+          '.h5pactivity .activity-instance {
               display: none !important;
             }';
         }
