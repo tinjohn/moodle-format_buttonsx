@@ -96,6 +96,9 @@ M.format_buttonsx.show = function(id, courseid) {
             currentsection.style.display = 'block';
             document.cookie = 'sectionvisible_' + courseid + '=' + id + '; path=/';
             M.format_buttonsx.h5p();
+            // ADDED tinjohn 23092022
+            document.querySelector('#buttonsectioncontainer').scrollIntoView()
+            // END ADDED
         }
 
         // ADDED
@@ -128,6 +131,7 @@ M.format_buttonsx.show = function(id, courseid) {
         }
         // ADDED END
     }
+
 };
 
 M.format_buttonsx.h5p = function() {
