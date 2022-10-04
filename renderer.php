@@ -38,8 +38,7 @@ require_once($CFG->dirroot.'/course/format/topics/renderer.php');
  * @copyright  2020 Rodrigo Brandão <rodrigo.brandao.contato@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_buttonsx_renderer extends format_topics_renderer
-{
+class format_buttonsx_renderer extends format_topics_renderer {
 
     /**
      * Get_button_section
@@ -123,7 +122,6 @@ class format_buttonsx_renderer extends format_topics_renderer
      * @return string
      */
     protected function get_button_section($course, $sectionvisible) {
-        global $PAGE;
         $html = '';
         $css = '';
         if ($colorcurrent = $this->get_color_config($course, 'colorcurrent')) {
@@ -140,14 +138,23 @@ class format_buttonsx_renderer extends format_topics_renderer
             }
             ';
         }
-        // ADDED tina john 20220825
-        if (!$PAGE->user_is_editing() && !$course->displayh5picons) {
-          $css .=
-          '.h5pactivity .activity-instance {
+        // ADDED tina john 20220825.
+        if (!$this->page->user_is_editing() && !$course->displayh5picons) {
+            $css .=
+            '.h5pactivity .activity-instance {
               display: none !important;
             }';
         }
-        // END ADDED
+        // 20220926.
+        if (!$this->page->user_is_editing() && !$course->act_complinfo_position) {
+            $css .=
+            '.activity-item {
+              display: flex;
+              flex-direction: column-reverse;
+            }';
+        }
+
+        // END ADDED.
         if ($css) {
             $html .= html_writer::tag('style', $css);
         }
@@ -157,7 +164,6 @@ class format_buttonsx_renderer extends format_topics_renderer
                 $withoutdivisor = false;
             }
         }
-
 
         $modinfo = get_fast_modinfo($course);
         if ($withoutdivisor) {
@@ -227,110 +233,108 @@ class format_buttonsx_renderer extends format_topics_renderer
             if ($sectionvisible == $section) {
                 $class .= ' sectionvisible';
             }
-            if ($PAGE->user_is_editing()) {
+            if ($this->page->user_is_editing()) {
                 $onclick = false;
             }
             $html .= html_writer::tag('div', $name, ['id' => $id, 'class' => $class, 'onclick' => $onclick]);
             $count++;
         }
         $html = html_writer::tag('div', $html, ['id' => 'buttonsectioncontainer', 'class' => $course->buttonstyle]);
-        if ($PAGE->user_is_editing()) {
+        if ($this->page->user_is_editing()) {
             $html .= html_writer::tag('div', get_string('editing', 'format_buttonsx'), ['class' => 'alert alert-warning alert-block fade in']);
         }
         return $html;
     }
 
 
-    // ADDED
+    // ADDED.
     /**
      * is_previous_vis_section
      *
      * @return boolean
      */
-     protected function is_previous_vis_section ($course, $sectionnrvisible, $sectionnr) {
-       $modinfo = get_fast_modinfo($course);
+    protected function is_previous_vis_section ($course, $sectionnrvisible, $sectionnr) {
+        $modinfo = get_fast_modinfo($course);
 
-       # sectionsnrvisible - preselected section
-       # sectionnr - current section in processing
+        /*
+        # sectionsnrvisible - preselected section
+        # sectionnr - current section in processing
 
+        # it's a previous section when
+        # $sectionvisible - 1 == $section && (int)$thissection->visible
+        */
+        $sectionnrbef = $sectionnrvisible - 1;
+        $thissection = $modinfo->get_section_info($sectionnrbef);
 
-       # it's a previous section when
-       # $sectionvisible - 1 == $section && (int)$thissection->visible
-       $sectionnrbef = $sectionnrvisible - 1;
-       $thissection = $modinfo->get_section_info($sectionnrbef);
-
-
-       if($sectionnrbef == $sectionnr && $thissection->visible) {
-         return true;
-       } else {
-         # find previous visible section and check against section
-         while (!$thissection->visible) {
-           $sectionnrbef = $sectionnrbef - 1;
-           if($sectionnrbef == 1) {
-             return false;
-           }
-           $thissection = $modinfo->get_section_info($sectionnrbef);
-         }
-         if($sectionnrbef == $sectionnr) {
-           return true;
-         }
-       }
-       return false;
-     }
+        if ($sectionnrbef == $sectionnr && $thissection->visible) {
+            return true;
+        } else {
+            // Find previous visible section and check against section.
+            while (!$thissection->visible) {
+                $sectionnrbef = $sectionnrbef - 1;
+                if ($sectionnrbef == 1) {
+                    return false;
+                }
+                $thissection = $modinfo->get_section_info($sectionnrbef);
+            }
+            if ($sectionnrbef == $sectionnr) {
+                return true;
+            }
+        }
+        return false;
+    }
 
      /**
       * is_next_vis_section
       *
       * @return boolean
       */
-      protected function is_next_vis_section ($course, $sectionvisible, $section) {
-        if($sectionvisible + 1  == $section) {
-          return true;
+    protected function is_next_vis_section ($course, $sectionvisible, $section) {
+        if ($sectionvisible + 1 == $section) {
+            return true;
         }
         return false;
-      }
+    }
 
-      /**
-       * is_divi_previous_vis_section
-       *
-       * @return boolean
-       */
-       protected function is_divi_previous_vis_section ($course, $sectionnr, $count, $currentdivisor) {
-         if (!isset($course->{'divisor' . $currentdivisor})) {
-           return false;
-         }
-         $modinfo = get_fast_modinfo($course);
-         $thissection = $modinfo->get_section_info($sectionnr);
-         if(!$thissection->visible) {
-           return false;
-         }
-         // section navigator wants to know if there was any section left till the divisor
-         $cntsectionnr = $sectionnr;
-         $ki = 1;
-         $allhidden = true;
-         for ($k = $count; $k < ($course->{'divisor' . $currentdivisor}); $k++) {
-           $cntsectionnr = $sectionnr + $ki;
-           $cnt_invis = 0;
-           $thissection = $modinfo->get_section_info($cntsectionnr);
-           if($thissection->visible) {
-              return false;
-           } else {
-             $cnt_invis++;
-           }
-           $ki++;
-         }
-         if($cnt_invis > 0) {
-           return true;
-         }
-         return false;
-       }
+    /**
+     * is_divi_previous_vis_section
+     *
+     * @return boolean
+     */
+    protected function is_divi_previous_vis_section ($course, $sectionnr, $count, $currentdivisor) {
+        if (!isset($course->{'divisor' . $currentdivisor})) {
+            return false;
+        }
+        $modinfo = get_fast_modinfo($course);
+        $thissection = $modinfo->get_section_info($sectionnr);
+        if (!$thissection->visible) {
+            return false;
+        }
+        // Section navigator wants to know if there was any section left till the divisor.
+        $cntsectionnr = $sectionnr;
+        $ki = 1;
+        $allhidden = true;
+        for ($k = $count; $k < ($course->{'divisor' . $currentdivisor}); $k++) {
+            $cntsectionnr = $sectionnr + $ki;
+            $cntinvis = 0;
+            $thissection = $modinfo->get_section_info($cntsectionnr);
+            if ($thissection->visible) {
+                return false;
+            } else {
+                $cntinvis++;
+            }
+            $ki++;
+        }
+        if ($cntinvis > 0) {
+            return true;
+        }
+        return false;
+    }
 
+    // END ADDED.
 
-      // END ADDED
-
-
-    // INCLUDED /course/format/renderer.php function get_button_section_bottom
-    // based on get_button_section
+    // INCLUDED /course/format/renderer.php function get_button_section_bottom.
+    // Based on get_button_section.
     /**
      * Get_button_section_bottom
      *
@@ -339,15 +343,14 @@ class format_buttonsx_renderer extends format_topics_renderer
      * @return string
      */
     protected function get_button_section_bottom ($course, $sectionvisible) {
-        global $PAGE;
         $html = '';
         $css = '';
-        if(!$course->usebottommenu) {
-          $html = html_writer::tag('div', $html, ['id' => 'bottombuttonsectioncontainer', 'class' => $course->buttonstyle]);
-          if ($PAGE->user_is_editing()) {
-              $html .= html_writer::tag('div', get_string('editing', 'format_buttonsx'), ['class' => 'alert alert-warning alert-block fade in']);
-          }
-          return $html;
+        if ($course->usebottommenu) {
+            $html = html_writer::tag('div', $html, ['id' => 'bottombuttonsectioncontainer', 'class' => $course->buttonstyle]);
+            if ($this->page->user_is_editing()) {
+                $html .= html_writer::tag('div', get_string('editing', 'format_buttonsx'), ['class' => 'alert alert-warning alert-block fade in']);
+            }
+            return $html;
         }
 
         if ($colorcurrent = $this->get_color_config($course, 'colorcurrent')) {
@@ -361,15 +364,15 @@ class format_buttonsx_renderer extends format_topics_renderer
             '#bottombuttonsectioncontainer {
                 --button-viscol: ' . $colorvisible . ';
             }';
-;
+            // A semicolon alone in the code - commented ;.
         }
         if ($css) {
             $html .= html_writer::tag('style', $css);
         }
         $withoutdivisor = true;
 
-        // $course->divisor1  already set in the main menu
-        // but kept for further development maybe without main menu
+        // The $course->divisor1  already set in the main menu.
+        // But kept for further development maybe without main menu.
         for ($k = 1; $k <= 12; $k++) {
             if ($course->{'divisor' . $k} != 0) {
                 $withoutdivisor = false;
@@ -391,8 +394,8 @@ class format_buttonsx_renderer extends format_topics_renderer
         $hidden = false;
         $lasthiddencnt = 0;
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {
-            if($hidden) {
-              $lasthiddencnt = $lasthiddencnt + 1;
+            if ($hidden) {
+                $lasthiddencnt = $lasthiddencnt + 1;
             }
             $hidden = false;
             if ($section == 0) {
@@ -443,53 +446,50 @@ class format_buttonsx_renderer extends format_topics_renderer
             if ($sectionvisible == $section) {
                 $class .= ' sectionvisible';
             } else {
-               // sectionbeforevisible arrows, sectionaftervisible arrows for divisor jump set by js init
+                // Sectionbeforevisible arrows, sectionaftervisible arrows for divisor jump set by js init.
                 $class .= ' sectionnotvisible';
             }
 
-
-            if ($PAGE->user_is_editing()) {
+            if ($this->page->user_is_editing()) {
                 $onclick = false;
             }
-            // if($count == 1) {
-            //   $arspan = html_writer::tag('div', "", ['id' => '', 'class' => 'divisorline']);
-            //    $name = $arspan.''.$name;
-            // }
-
-            // ADDED
-            //
-            // $withoutdivisor is always false because first divisor is set for main
-            // to length of sections
-            if (!$withoutdivisor) {
-              if($count == (1 + $lasthiddencnt)) {
-                $class .= ' specialbgafter';
-              } elseif ($count == ($course->{'divisor' . $currentdivisor})) {
-                $class .= ' specialbgbefore';
-                // der davor müsste schon wissen, dass er hidden ist
-              } else {
-                if ($this->is_divi_previous_vis_section($course, $section, $count, $currentdivisor)) {
-                  $class .= ' specialbgbefore';
-                }
-              }
+            /*
+            if ($count == 1) {
+              $arspan = html_writer::tag('div', "", ['id' => '', 'class' => 'divisorline']);
+               $name = $arspan.''.$name;
             }
-
+            */
+            /* ADDED.
+                $withoutdivisor is always false because first divisor is set for main
+                to length of sections.
+            */
+            if (!$withoutdivisor) {
+                if ($count == (1 + $lasthiddencnt)) {
+                    $class .= ' specialbgafter';
+                } elseif ($count == ($course->{'divisor' . $currentdivisor})) {
+                    $class .= ' specialbgbefore';
+                    // Der davor müsste schon wissen, dass er hidden ist.
+                } else {
+                    if ($this->is_divi_previous_vis_section($course, $section, $count, $currentdivisor)) {
+                        $class .= ' specialbgbefore';
+                    }
+                }
+            }
             if ($course->marker == $section) {
                 $class .= ' current';
             }
             if (!$hidden) {
-              $html .= html_writer::tag('div', $name, ['id' => $id, 'class' => $class, 'onclick' => $onclick]);
+                $html .= html_writer::tag('div', $name, ['id' => $id, 'class' => $class, 'onclick' => $onclick]);
             }
             $count++;
         }
         $html = html_writer::tag('div', $html, ['id' => 'bottombuttonsectioncontainer', 'class' => $course->buttonstyle]);
-        if ($PAGE->user_is_editing()) {
+        if ($this->page->user_is_editing()) {
             $html .= html_writer::tag('div', get_string('editing', 'format_buttonsx'), ['class' => 'alert alert-warning alert-block fade in']);
         }
         return $html;
     }
-
-
-    // END INCLUDED
+    // END INCLUDED.
 
     /**
      * Start_section_list
@@ -510,8 +510,6 @@ class format_buttonsx_renderer extends format_topics_renderer
      * @return string
      */
     protected function section_header($section, $course, $onsectionpage, $sectionreturn = null) {
-        global $PAGE;
-
         $o = '';
         $currenttext = '';
         $sectionstyle = '';
@@ -526,24 +524,24 @@ class format_buttonsx_renderer extends format_topics_renderer
             }
         }
 
-        $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
-             'class' => 'section main clearfix'.$sectionstyle, 'role'=>'region',
-             'aria-label'=> get_section_name($course, $section)));
+        $o .= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
+             'class' => 'section main clearfix'.$sectionstyle, 'role' => 'region',
+             'aria-label' => get_section_name($course, $section)));
 
         // Create a span that contains the section title to be used to create the keyboard section move menu.
         $o .= html_writer::tag('span', get_section_name($course, $section), array('class' => 'hidden sectionname'));
 
         $leftcontent = $this->section_left_content($section, $course, $onsectionpage);
-        $o.= html_writer::tag('div', $leftcontent, array('class' => 'left side'));
+        $o .= html_writer::tag('div', $leftcontent, array('class' => 'left side'));
 
         $rightcontent = $this->section_right_content($section, $course, $onsectionpage);
-        $o.= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
-        $o.= html_writer::start_tag('div', array('class' => 'content'));
+        $o .= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
+        $o .= html_writer::start_tag('div', array('class' => 'content'));
 
-        // When not on a section page, we display the section titles except the general section if null
+        // When not on a section page, we display the section titles except the general section if null.
         $hasnamenotsecpg = (!$onsectionpage && ($section->section != 0 || !is_null($section->name)));
 
-        // When on a section page, we only display the general section title, if title is not the default one
+        // When on a section page, we only display the general section title, if title is not the default one.
         $hasnamesecpg = ($onsectionpage && ($section->section == 0 && !is_null($section->name)));
 
         $classes = ' accesshide';
@@ -552,11 +550,11 @@ class format_buttonsx_renderer extends format_topics_renderer
         }
         $sectionname = html_writer::tag('span', $this->section_title($section, $course));
 
-        // Button format - ini
+        // Button format - ini.
         if ($course->showdefaultsectionname) {
-            $o.= $this->output->heading($sectionname, 3, 'sectionname' . $classes);
+            $o .= $this->output->heading($sectionname, 3, 'sectionname' . $classes);
         }
-        // Button format - end
+        // Button format - end.
 
         $o .= $this->section_availability($section);
 
@@ -582,8 +580,6 @@ class format_buttonsx_renderer extends format_topics_renderer
      * @param array $modnamesused (argument not used)
      */
     public function print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused) {
-        global $PAGE;
-
         $modinfo = get_fast_modinfo($course);
         $course = course_get_format($course)->get_course();
 
@@ -591,7 +587,7 @@ class format_buttonsx_renderer extends format_topics_renderer
         // Title with completion help icon.
         $completioninfo = new completion_info($course);
 
-        // buttons format - ini
+        // Buttons format - ini.
         if (isset($_COOKIE['sectionvisible_' . $course->id])) {
             $sectionvisible = $_COOKIE['sectionvisible_' . $course->id];
         } else if ($course->marker > 0) {
@@ -610,7 +606,7 @@ class format_buttonsx_renderer extends format_topics_renderer
                 continue;
             }
             /* If is not editing verify the rules to display the sections */
-            if (!$PAGE->user_is_editing()) {
+            if (!$this->page->user_is_editing()) {
                 if ($course->hiddensections && !(int)$thissection->visible) {
                     continue;
                 }
@@ -630,7 +626,7 @@ class format_buttonsx_renderer extends format_topics_renderer
             }
             $htmlsection[$section] .= $this->section_footer();
         }
-        if ($section0->summary || !empty($modinfo->sections[0]) || $PAGE->user_is_editing()) {
+        if ($section0->summary || !empty($modinfo->sections[0]) || $this->page->user_is_editing()) {
             $htmlsection0 = $this->section_header($section0, $course, false, 0);
             $htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0);
             $htmlsection0 .= $this->courserenderer->course_section_add_cm_control($course, 0, 0);
@@ -640,19 +636,19 @@ class format_buttonsx_renderer extends format_topics_renderer
         echo $this->output->heading($this->page_title(), 2, 'accesshide');
         echo $this->course_activity_clipboard($course, 0);
         echo $this->start_section_list();
-        if ($course->sectionposition == 0 and isset($htmlsection0)) {
+        if ($course->sectionposition == 0 && isset($htmlsection0)) {
             echo html_writer::tag('span', $htmlsection0, ['class' => 'above']);
         }
         echo $this->get_button_section($course, $sectionvisible);
         foreach ($htmlsection as $current) {
             echo $current;
         }
-        if ($course->sectionposition == 1 and isset($htmlsection0)) {
+        if ($course->sectionposition == 1 && isset($htmlsection0)) {
             echo html_writer::tag('span', $htmlsection0, ['class' => 'below']);
         }
-        if ($PAGE->user_is_editing() and has_capability('moodle/course:update', $context)) {
+        if ($this->page->user_is_editing() && has_capability('moodle/course:update', $context)) {
             foreach ($modinfo->get_section_info_all() as $section => $thissection) {
-                if ($section <= $course->numsections or empty($modinfo->sections[$section])) {
+                if ($section <= $course->numsections || empty($modinfo->sections[$section])) {
                     continue;
                 }
                 echo $this->stealth_section_header($section);
@@ -682,17 +678,17 @@ class format_buttonsx_renderer extends format_topics_renderer
             echo $this->end_section_list();
         }
 
-        // // ADDED.
-        // // tinjohn 2022-07-29
-        // // configuration option was added and is used here
-        // if ($course->usebottommenu) {
+        // ADDED.
+        // By tinjohn 2022-07-29.
+        // Configuration option was added and is used here.
+        /* if ($course->usebottommenu) { */
            echo $this->get_button_section_bottom($course, $sectionvisible);
-        // }
-        // // END ADDED.
+        /* } */
+        // END ADDED.
 
-        if (!$PAGE->user_is_editing()) {
-            $PAGE->requires->js_init_call('M.format_buttonsx.init', [$course->numsections, $sectionvisible, $course->id]);
+        if (!$this->page->user_is_editing()) {
+            $this->page->requires->js_init_call('M.format_buttonsx.init', [$course->numsections, $sectionvisible, $course->id]);
         }
-        // Button format - end
+        // Button format - end.
     }
 }

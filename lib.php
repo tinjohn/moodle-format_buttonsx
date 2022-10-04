@@ -74,7 +74,7 @@ class format_buttonsx extends format_topics {
                 'default' => get_config('format_buttonsx', 'inlinesections'),
                 'type' => PARAM_INT,
             );
-            // ADDED tina john
+            // ADDED tina john.
             $courseformatoptions['usebottommenu'] = array(
                 'default' => get_config('format_buttonsx', 'usebottommenu'),
                 'type' => PARAM_INT,
@@ -83,7 +83,11 @@ class format_buttonsx extends format_topics {
                 'default' => get_config('format_buttonsx', 'displayh5picons'),
                 'type' => PARAM_INT,
             );
-            // END ADDED
+            $courseformatoptions['act_complinfo_position'] = array(
+                'default' => get_config('format_buttonsx', 'act_complinfo_position'),
+                'type' => PARAM_INT,
+            );
+            // END ADDED.
 
             $courseformatoptions['sequential'] = array(
                 'default' => get_config('format_buttonsx', 'sequential'),
@@ -193,9 +197,8 @@ class format_buttonsx extends format_topics {
                     ),
                 ),
             );
-            // ADDED
-            // tinjohn 2022-07-29
-            // option for bottom menu - defaults no
+            // ADDED tinjohn 2022-07-29
+            // Option for bottom menu - defaults no.
             $courseformatoptionsedit['usebottommenu'] = array(
                 'label' => get_string('usebottommenu', 'format_buttonsx'),
                 'help' => 'usebottommenu',
@@ -203,13 +206,13 @@ class format_buttonsx extends format_topics {
                 'element_type' => 'select',
                 'element_attributes' => array(
                     array(
-                        0 => get_string('no', 'format_buttonsx'),
-                        1 => get_string('yes', 'format_buttonsx'),
+                        0 => get_string('yes', 'format_buttonsx'),
+                        1 => get_string('no', 'format_buttonsx'),
                     ),
                 ),
             );
 
-            // for h5picon displayed for users
+            // For h5picon displayed for users.
             $courseformatoptionsedit['displayh5picons'] = array(
                 'label' => get_string('displayh5picons', 'format_buttonsx'),
                 'help' => 'displayh5picons',
@@ -223,7 +226,21 @@ class format_buttonsx extends format_topics {
                 ),
             );
 
-            // END ADDED
+            // 20222609 act_complinfo_below.
+            $courseformatoptionsedit['act_complinfo_position'] = array(
+                'label' => get_string('act_complinfo_position', 'format_buttonsx'),
+                'help' => 'act_complinfo_position',
+                'help_component' => 'format_buttonsx',
+                'element_type' => 'select',
+                'element_attributes' => array(
+                    array(
+                      0 => get_string('below_act', 'format_buttonsx'),
+                      1 => get_string('above_act', 'format_buttonsx'),
+                    ),
+                ),
+            );
+            // END ADDED.
+
             $courseformatoptionsedit['inlinesections'] = array(
                 'label' => get_string('inlinesections', 'format_buttonsx'),
                 'help' => 'inlinesections',

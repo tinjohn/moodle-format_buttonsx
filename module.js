@@ -24,6 +24,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+ //document.addEventListener(CourseEvents.manualCompletionToggled, (e) => {
+  // alert("manual completed");
+     // const withAvailability = parseInt(e.detail.withAvailability);
+     // if (withAvailability) {
+     //     // Reload the page when the toggled manual completion button has availability conditions linked to it.
+     //     window.location.reload();
+    //  }
+ //});
+
+ // END added
+
 M.format_buttonsx = M.format_buttonsx || {
     ourYUI: null,
     numsections: 0
@@ -97,7 +109,8 @@ M.format_buttonsx.show = function(id, courseid) {
             document.cookie = 'sectionvisible_' + courseid + '=' + id + '; path=/';
             M.format_buttonsx.h5p();
             // ADDED tinjohn 23092022
-            document.querySelector('#buttonsectioncontainer').scrollIntoView()
+            document.querySelector('#buttonsectioncontainer').scrollIntoView();
+          // was just a test  window.location.reload();
             // END ADDED
         }
 

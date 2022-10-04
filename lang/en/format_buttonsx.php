@@ -74,9 +74,13 @@ $string['circle'] = 'Circle';
 $string['square'] = 'Square';
 $string['inlinesections'] = 'Inline sections';
 $string['inlinesections_help'] = 'Give each section a new line.';
-// ADDED
+// ADDED.
 $string['usebottommenu'] = 'Show bottom menu';
 $string['usebottommenu_help'] = 'An additional navigation menu at the end of each section.';
 $string['displayh5picons'] = 'Display (yes) h5p icon';
 $string['displayh5picons_help'] = "(no) hides the h5p icon and link in the course while not in editing mode. Useful for embedded h5p contents within it's own description, that is thus not able to be hidden.";
-// END ADDED
+$string['act_complinfo_position'] = 'Display completion info';
+$string['act_complinfo_position_help'] = "Completion information or marks are displayed (per default) next to the headline of the activity. Choose below to change the position.";
+$string['below_act'] = "below activity";
+$string['above_act'] = "above activity";
+// END ADDED.
