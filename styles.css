@@ -33,6 +33,16 @@
     margin: 0 40px;
 }
 
+@media screen and (max-width: 740px) {
+  .course-content ul.buttons li.section .content {
+      margin: 0 5px;
+  }
+  .section .activity {
+    margin-left: 1rem;
+    margin-right: 1rem; 
+  }
+}
+
 .course-content ul.buttons li.section .left,
 .course-content ul.buttons li.section .right {
     width: 40px;
@@ -289,6 +299,7 @@
     content: "\A";
     white-space: pre;
 }
+
 
 /* editing */
 .editing .course-content ul.buttons li.section.main:not(#section-0) {
