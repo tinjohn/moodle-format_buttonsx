@@ -227,8 +227,16 @@ class format_buttonsx_renderer extends format_topics_renderer {
                 $class .= ' sectionhidden';
                 $onclick = false;
             }
+            // ADDED tinjohn 06102022 deprecated option to have since moodle 4.0.
             if ($course->marker == $section) {
                 $class .= ' current';
+            }
+            // ADDED tinjohn 06102022 instead use last for OCP
+            if ($section == $course->hilight) {
+                $class .= ' hilight';
+            }
+            if ($course->hililast && $course->numsections == $section) {
+              $class .= ' hilight';
             }
             if ($sectionvisible == $section) {
                 $class .= ' sectionvisible';
@@ -478,6 +486,14 @@ class format_buttonsx_renderer extends format_topics_renderer {
             if ($course->marker == $section) {
                 $class .= ' current';
             }
+            // ADDED tinjohn 20221006 instead use last for OCP
+            if ($section == $course->hilight) {
+                $class .= ' hilight';
+            }
+            if ($course->hililast && $course->numsections == $section) {
+              $class .= ' hilight';
+            }
+
             if (!$hidden) {
                 $html .= html_writer::tag('div', $name, ['id' => $id, 'class' => $class, 'onclick' => $onclick]);
             }

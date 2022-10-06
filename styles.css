@@ -39,7 +39,7 @@
   }
   .section .activity {
     margin-left: 1rem;
-    margin-right: 1rem; 
+    margin-right: 1rem;
   }
 }
 
@@ -190,10 +190,14 @@
 }
 
 /* colors */
+#buttonsectioncontainer .buttonsection.hilight {
+    background: var(--button-currcol); /* CHANGED */
+    color: var(--button-currcol);  /* CHANGED */
+}
+
 #buttonsectioncontainer .buttonsection.current {
     /* background: #115898; */
     background: var(--button-currcol); /* CHANGED */
-
     color: #fff;
 }
 

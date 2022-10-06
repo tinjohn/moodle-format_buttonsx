@@ -87,6 +87,15 @@ class format_buttonsx extends format_topics {
                 'default' => get_config('format_buttonsx', 'act_complinfo_position'),
                 'type' => PARAM_INT,
             );
+            // ADDED tinjohn 20221006.
+            $courseformatoptions['hilight'] = array(
+                'default' => get_config('format_buttonsx', 'hilight'),
+                'type' => PARAM_INT,
+            );
+            $courseformatoptions['hililast'] = array(
+                'default' => get_config('format_buttonsx', 'hililast'),
+                'type' => PARAM_INT,
+            );
             // END ADDED.
 
             $courseformatoptions['sequential'] = array(
@@ -239,6 +248,27 @@ class format_buttonsx extends format_topics {
                     ),
                 ),
             );
+
+            $courseformatoptionsedit['hililast'] = array(
+                'label' => get_string('hililast', 'format_buttonsx'),
+                'help' => 'hililast',
+                'help_component' => 'format_buttonsx',
+                'element_type' => 'select',
+                'element_attributes' => array(
+                    array(
+                      0 => get_string('yes', 'format_buttonsx'),
+                      1 => get_string('no', 'format_buttonsx'),
+                    ),
+                ),
+            );
+            $courseformatoptionsedit['hilight'] = array(
+                'label' => get_string('highlight', 'format_buttonsx'),
+                'element_type' => 'select',
+                'element_attributes' => array($sectionmenu),
+            );
+
+
+
             // END ADDED.
 
             $courseformatoptionsedit['inlinesections'] = array(

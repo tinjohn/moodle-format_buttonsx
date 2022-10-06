@@ -83,4 +83,9 @@ $string['act_complinfo_position'] = 'Display completion info';
 $string['act_complinfo_position_help'] = "Completion information or marks are displayed (per default) next to the headline of the activity. Choose below to change the position.";
 $string['below_act'] = "below activity";
 $string['above_act'] = "above activity";
+$string['highlight'] = "highlight section";
+$string['hililast_help'] = "Highlight color -current- configured at the end of the option list is the color to be used for the choosen button overall.";
+$string['hililast'] = "highlight last section";
+$string['hililast_help'] = "Highlight color -current- configured at the end of the option list is the color to be used for the last button overall.";
+
 // END ADDED.
