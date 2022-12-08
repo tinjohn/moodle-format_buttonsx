@@ -24,13 +24,24 @@
  * @copyright  2020 Rodrigo Brandão <rodrigo.brandao.contato@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+ ul {
+   padding-inline-start: 0px;
+ }
+ ul.section {
+   margin: 0px;
+ }
 .course-content ul.buttons {
     margin: 0;
     list-style: none;
 }
 
 .course-content ul.buttons li.section .content {
-    margin: 0 40px;
+    margin: 0 5px;
+}
+
+.course-content ul.buttons li.section .content {
+
 }
 
 @media screen and (max-width: 740px) {
@@ -192,7 +203,8 @@
 /* colors */
 #buttonsectioncontainer .buttonsection.hilight {
     background: var(--button-currcol); /* CHANGED */
-    color: var(--button-currcol);  /* CHANGED */
+  /*  color: var(--button-currcol);   CHANGED */
+  color: #fff;
 }
 
 #buttonsectioncontainer .buttonsection.current {
