@@ -31,4 +31,4 @@ $plugin->requires = 2015111600; /* moodle 3.0 */
 $plugin->component = 'format_buttonsx';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = 'v2';
-$plugin->version = 2022082501;
+$plugin->version = 2022090600;
