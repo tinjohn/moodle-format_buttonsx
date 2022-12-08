@@ -126,6 +126,13 @@ class format_buttonsx extends format_topics {
                     'default' => get_config('format_buttonsx', 'divisor'.$i),
                     'type' => PARAM_INT,
                 );
+                // ADDED tinjohn 20221208.
+                // A text for the button if single button only.
+                // Default is &bull;&bull;&bull;
+                $courseformatoptions['divisorsinglebuttext'.$i] = array(
+                    'default' => "&bull;&bull;&bull;",
+                    'type' => PARAM_TEXT,
+                );
             }
 
             $colorcurrent = get_config('format_buttonsx', 'colorcurrent');
@@ -334,6 +341,12 @@ class format_buttonsx extends format_topics {
                     'help_component' => 'format_buttonsx',
                     'element_type' => 'select',
                     'element_attributes' => array($sectionmenu),
+                );
+                $courseformatoptionsedit['divisorsinglebuttext'.$i] = array(
+                    'label' => get_string('divisorsinglebuttext', 'format_buttonsx', $i),
+                    'help' => 'divisorsinglebuttext',
+                    'help_component' => 'format_buttonsx',
+                    'element_type' => 'text',
                 );
             }
 

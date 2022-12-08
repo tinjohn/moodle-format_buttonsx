@@ -88,4 +88,6 @@ $string['hililast_help'] = "Highlight color -current- configured at the end of t
 $string['hililast'] = "highlight last section";
 $string['hililast_help'] = "Highlight color -current- configured at the end of the option list is the color to be used for the last button overall.";
 
+$string['divisorsinglebuttext'] = "label of single button";
+$string['divisorsinglebuttext_help'] = "Groups containing one button only will get the label &bull;&bull;&bull; because numbering is inapproiate in this case. Choose a short string you like to see in the button.";
 // END ADDED.

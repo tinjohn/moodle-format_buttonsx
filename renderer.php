@@ -207,7 +207,15 @@ class format_buttonsx_renderer extends format_topics_renderer {
             } else {
                 if (isset($course->{'divisor' . $currentdivisor}) &&
                 $course->{'divisor' . $currentdivisor} == 1) {
+                  // ADDED tinjohn 20221208.
+                  // make it an option
+                  // $courseformatoptions['divisorsinglebuttext'.$i]
+                  if (isset($course->{'divisorsinglebuttext' . $currentdivisor})) {
+                    $name = format_string($course->{'divisorsinglebuttext' . $currentdivisor});
+                  } else {
                     $name = '&bull;&bull;&bull;';
+                  }
+
                 } else {
                     $name = $count;
                 }
