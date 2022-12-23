@@ -156,7 +156,36 @@ M.format_buttonsx.h5p = function() {
     };
     for (var i = 0; i < iframes.length; i++) {
         if (iframes[i].src.indexOf('h5p') !== -1) {
+            M.format_buttonsx.h5prefreshSafari(iframes[i]);
             iframes[i].contentWindow.postMessage(ready, '*');
         }
     }
 };
+
+
+// ADDED tinjohn 20221223 - Safari bug does not give right scrollHeight due to wrong offsetHeight before refresh.
+// Results are wrong iframe dimensions.
+
+M.format_buttonsx.h5prefreshSafari = function(iframe) {
+    console.log('M.format_buttonsx.h55refreshSafari');
+    if (iframe.offsetParent === null) {
+      //console.log("not visible");
+      return;
+    }
+    if (iframe.getAttribute('visresized')) {
+      console.log("already resized");
+      return;
+    }
+    var safariBrowser = navigator.userAgent.match(/version\/([.\d]+)/i);
+    safariBrowser = (safariBrowser === null ? 0 : parseInt(safariBrowser[1]));
+    if (safariBrowser === 0) {
+      //console.log("kein Safari");
+      return;
+    }
+
+    iframe.src = iframe.src + '';
+    iframe.setAttribute('visresized', 'visresized');
+
+};
+
+// END ADDED.
