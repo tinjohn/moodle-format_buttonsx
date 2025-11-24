@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/course/format/topics/renderer.php');
+require_once($CFG->dirroot.'/course/renderer.php');
 
 /**
  * format_buttonsx_renderer
@@ -38,7 +38,7 @@ require_once($CFG->dirroot.'/course/format/topics/renderer.php');
  * @copyright  2020 Rodrigo Brandão <rodrigo.brandao.contato@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_buttonsx_renderer extends format_topics_renderer {
+class format_buttonsx_renderer extends core_course_renderer {
 
     /**
      * Get_button_section
@@ -595,6 +595,25 @@ class format_buttonsx_renderer extends format_topics_renderer {
     }
 
     /**
+     * Generate the display of a section footer
+     *
+     * @return string HTML to output.
+     */
+    protected function section_footer() {
+        $o = html_writer::end_tag('div');
+        $o .= html_writer::end_tag('li');
+        return $o;
+    }
+
+    /**
+     * Generate the closing container html for a list of sections
+     * @return string HTML to output.
+     */
+    protected function end_section_list() {
+        return html_writer::end_tag('ul');
+    }
+
+    /**
      * Print_multiple_section_page
      *
      * @param stdclass $course
@@ -619,7 +638,7 @@ class format_buttonsx_renderer extends format_topics_renderer {
         } else {
             $sectionvisible = 1;
         }
-        $htmlsection = false;
+        $htmlsection = [];
         foreach ($modinfo->get_section_info_all() as $section => $thissection) {
             $htmlsection[$section] = '';
             if ($section == 0) {
@@ -645,18 +664,17 @@ class format_buttonsx_renderer extends format_topics_renderer {
             }
             $htmlsection[$section] .= $this->section_header($thissection, $course, false, 0);
             if ($thissection->uservisible) {
-                $htmlsection[$section] .= $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                $htmlsection[$section] .= $this->courserenderer->course_section_add_cm_control($course, $section, 0);
+                $htmlsection[$section] .= $this->course_section_cm_list($course, $thissection, 0);
+                $htmlsection[$section] .= $this->course_section_add_cm_control($course, $section, 0);
             }
             $htmlsection[$section] .= $this->section_footer();
         }
         if ($section0->summary || !empty($modinfo->sections[0]) || $this->page->user_is_editing()) {
             $htmlsection0 = $this->section_header($section0, $course, false, 0);
-            $htmlsection0 .= $this->courserenderer->course_section_cm_list($course, $section0, 0);
-            $htmlsection0 .= $this->courserenderer->course_section_add_cm_control($course, 0, 0);
+            $htmlsection0 .= $this->course_section_cm_list($course, $section0, 0);
+            $htmlsection0 .= $this->course_section_add_cm_control($course, 0, 0);
             $htmlsection0 .= $this->section_footer();
         }
-        echo $completioninfo->display_help_icon();
         echo $this->output->heading($this->page_title(), 2, 'accesshide');
         echo $this->course_activity_clipboard($course, 0);
         echo $this->start_section_list();
@@ -676,7 +694,7 @@ class format_buttonsx_renderer extends format_topics_renderer {
                     continue;
                 }
                 echo $this->stealth_section_header($section);
-                echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
+                echo $this->course_section_cm_list($course, $thissection, 0);
                 echo $this->stealth_section_footer();
             }
             echo $this->end_section_list();
@@ -714,5 +732,591 @@ class format_buttonsx_renderer extends format_topics_renderer {
             $this->page->requires->js_init_call('M.format_buttonsx.init', [$course->numsections, $sectionvisible, $course->id]);
         }
         // Button format - end.
+    }
+
+    /**
+     * Render the enable bulk editing button.
+     * @param course_format $format the course format
+     * @return string|null the enable bulk button HTML (or null if no bulk available).
+     */
+    public function bulk_editing_button($format): ?string {
+        if (!$format->show_editor() || !$format->supports_components()) {
+            return null;
+        }
+        $widgetclass = $format->get_output_classname('content\\bulkedittoggler');
+        if (!class_exists($widgetclass)) {
+            return null;
+        }
+        $widget = new $widgetclass($format);
+        return $this->render($widget);
+    }
+
+    /**
+     * Generate the content to displayed on the left part of a section
+     * before course modules are included
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @param stdClass $course The course entry from DB
+     * @param bool $onsectionpage true if being printed on a section page
+     * @return string HTML to output.
+     */
+    protected function section_left_content($section, $course, $onsectionpage) {
+        $o = $this->output->spacer();
+
+        if ($section->section != 0) {
+            // Only in the non-general sections.
+            if (course_get_format($course)->is_section_current($section)) {
+                $o .= get_accesshide(get_string('currentsection', 'format_' . $course->format));
+            }
+        }
+        return $o;
+    }
+
+    /**
+     * Generate the content to displayed on the right part of a section
+     * before course modules are included
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @param stdClass $course The course entry from DB
+     * @param bool $onsectionpage true if being printed on a section page
+     * @return string HTML to output.
+     */
+    protected function section_right_content($section, $course, $onsectionpage) {
+        $o = '';
+        return $o;
+    }
+
+    /**
+     * Generate the section title, wraps it in a link to the section page if page is to be displayed on a separate page
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @param stdClass $course The course entry from DB
+     * @return string HTML to output.
+     */
+    public function section_title($section, $course) {
+        return $this->render(course_get_format($course)->inplace_editable_render_section_name($section));
+    }
+
+    /**
+     * Generate the section title to be displayed on the section page, without a link
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @param stdClass $course The course entry from DB
+     * @return string HTML to output.
+     */
+    public function section_title_without_link($section, $course) {
+        return $this->render(course_get_format($course)->inplace_editable_render_section_name($section, false));
+    }
+
+    /**
+     * Output the html for a single section page.
+     *
+     * @param stdClass $course The course entry from DB
+     * @param array $sections The course_sections entries from the DB
+     * @param array $mods used for print_section()
+     * @param array $modnames used for print_section()
+     * @param array $modnamesused used for print_section()
+     * @param int $displaysection The section number in the course which is being displayed
+     */
+    public function print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
+        // This method is deprecated but may still be called
+        // Simply return empty to avoid errors
+        return;
+    }
+
+    /**
+     * Output the html for the section availability information.
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @return string HTML to output.
+     */
+    protected function section_availability($section) {
+        $o = '';
+        if (!$section->uservisible && !empty($section->availableinfo)) {
+            // Note: We only get to this function if availableinfo is non-empty,
+            // so there is definitely something to print.
+            $o .= html_writer::start_tag('div', ['class' => 'availabilityinfo']);
+            $o .= $section->availableinfo;
+            $o .= html_writer::end_tag('div');
+        }
+        return $o;
+    }
+
+    /**
+     * Show if something is on the course clipboard (moving around)
+     *
+     * @param stdClass $course The course entry from DB
+     * @param int $sectionno The section number in the course which is being displayed
+     * @return string HTML to output.
+     */
+    protected function course_activity_clipboard($course, $sectionno = null) {
+        global $USER;
+
+        $o = '';
+        // If currently moving a file then show the current clipboard.
+        if (ismoving($course->id)) {
+            $url = new moodle_url('/course/mod.php',
+                ['sesskey' => sesskey(),
+                 'cancelcopy' => 'true',
+                 'sr' => $sectionno,
+                ]
+            );
+
+            $o .= html_writer::start_tag('div', ['class' => 'clipboard']);
+            $o .= strip_tags(get_string('activityclipboard', '', $USER->activitycopyname));
+            $o .= ' (' . html_writer::link($url, get_string('cancel')) . ')';
+            $o .= html_writer::end_tag('div');
+        }
+
+        return $o;
+    }
+
+    /**
+     * Format summary text for the section.
+     *
+     * @param stdClass $section The section object.
+     * @return string the formatted summary text.
+     */
+    protected function format_summary_text($section) {
+        $context = context_course::instance($section->course);
+        $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php',
+            $context->id, 'course', 'section', $section->id);
+
+        $options = new stdClass();
+        $options->noclean = true;
+        $options->overflowdiv = true;
+        return format_text($summarytext, $section->summaryformat, $options);
+    }
+
+    /**
+     * Generate the content to display the list of course modules in a section.
+     *
+     * @param stdClass $course The course entry from DB
+     * @param int|stdClass|section_info $section The course_section entry from DB
+     * @param int $sectionreturn The section to return to after an action
+     * @param array $displayoptions extra display options
+     * @return string HTML to output.
+     */
+    public function course_section_cm_list($course, $section, $sectionreturn = null, $displayoptions = []) {
+        global $USER;
+
+        $output = '';
+        $modinfo = get_fast_modinfo($course);
+        if (is_object($section)) {
+            $section = $modinfo->get_section_info($section->section);
+        } else {
+            $section = $modinfo->get_section_info($section);
+        }
+        $completioninfo = new completion_info($course);
+
+        // Check if we are currently in the process of moving a module with JavaScript disabled.
+        $ismoving = $this->page->user_is_editing() && ismoving($course->id);
+        if ($ismoving) {
+            $movingpix = new pix_icon('movehere', get_string('movehere'), 'moodle', ['class' => 'movetarget']);
+            $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
+        }
+
+        // Get the list of modules visible to user (excluding the module being moved if there is one).
+        $moduleshtml = [];
+        if (!empty($modinfo->sections[$section->section])) {
+            foreach ($modinfo->sections[$section->section] as $modnumber) {
+                $mod = $modinfo->cms[$modnumber];
+
+                if ($ismoving && $mod->id == $USER->activitycopy) {
+                    // Do not display moving mod.
+                    continue;
+                }
+
+                if ($modulehtml = $this->course_section_cm_list_item($course,
+                        $completioninfo, $mod, $sectionreturn, $displayoptions)) {
+                    $moduleshtml[$modnumber] = $modulehtml;
+                }
+            }
+        }
+
+        $sectionoutput = '';
+        if (!empty($moduleshtml) || $ismoving) {
+            foreach ($moduleshtml as $modnumber => $modulehtml) {
+                if ($ismoving) {
+                    $movingurl = new moodle_url('/course/mod.php', ['moveto' => $modnumber, 'sesskey' => sesskey()]);
+                    $sectionoutput .= html_writer::tag('li',
+                        html_writer::link($movingurl, $this->output->render($movingpix), ['title' => $strmovefull]),
+                        ['class' => 'movehere']);
+                }
+
+                $sectionoutput .= $modulehtml;
+            }
+
+            if ($ismoving) {
+                $movingurl = new moodle_url('/course/mod.php', ['movetosection' => $section->id, 'sesskey' => sesskey()]);
+                $sectionoutput .= html_writer::tag('li',
+                    html_writer::link($movingurl, $this->output->render($movingpix), ['title' => $strmovefull]),
+                    ['class' => 'movehere']);
+            }
+        }
+
+        // Always output the section module list.
+        $output .= html_writer::tag('ul', $sectionoutput, ['class' => 'section img-text']);
+
+        return $output;
+    }
+
+    /**
+     * Renders HTML to display one course module for display within a section.
+     *
+     * @param stdClass $course
+     * @param completion_info $completioninfo
+     * @param cm_info $mod
+     * @param int|null $sectionreturn
+     * @param array $displayoptions
+     * @return String
+     */
+    public function course_section_cm_list_item($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = []) {
+
+        $output = '';
+        if ($modulehtml = $this->course_section_cm($course, $completioninfo, $mod, $sectionreturn, $displayoptions)) {
+            $modclasses = 'activity ' . $mod->modname . ' modtype_' . $mod->modname . ' ' . $mod->extraclasses;
+            $output .= html_writer::tag('li', $modulehtml, ['class' => $modclasses, 'id' => 'module-' . $mod->id]);
+        }
+        return $output;
+    }
+
+    /**
+     * Renders HTML to display one course module in a course section
+     *
+     * @param stdClass $course
+     * @param completion_info $completioninfo
+     * @param cm_info $mod
+     * @param int|null $sectionreturn
+     * @param array $displayoptions
+     * @return String
+     */
+    public function course_section_cm($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = []) {
+        $output = '';
+        // We return empty string (because course module will not be displayed at all)
+        // if:
+        // 1) The activity is not visible to users
+        // and
+        // 2) The 'availableinfo' is empty, i.e. the activity was
+        //     hidden in a way that leaves no info, such as using the
+        //     eye icon.
+        if (!$mod->is_visible_on_course_page()) {
+            return $output;
+        }
+
+        $indentclasses = 'mod-indent';
+        if (!empty($mod->indent)) {
+            $indentclasses .= ' mod-indent-'.$mod->indent;
+            if ($mod->indent > 15) {
+                $indentclasses .= ' mod-indent-huge';
+            }
+        }
+
+        $output .= html_writer::start_tag('div');
+
+        if ($this->page->user_is_editing()) {
+            $output .= course_get_cm_move($mod, $sectionreturn);
+        }
+
+        $output .= html_writer::start_tag('div', ['class' => 'mod-indent-outer']);
+
+        // This div is used to indent the content.
+        $output .= html_writer::div('', $indentclasses);
+
+        // Start the div for the activity content.
+        $output .= html_writer::start_tag('div', ['class' => 'activityinstance']);
+        $output .= $this->course_section_cm_name($mod, $displayoptions);
+
+        if ($mod->uservisible) {
+            $output .= $this->course_section_cm_completion_legacy($course, $completioninfo, $mod, $displayoptions);
+        }
+
+        $output .= html_writer::end_tag('div'); // .activityinstance
+
+        // If there is content AND a link, then display the content here
+        // (AFTER any icons). Otherwise it was displayed before.
+        $output .= $this->course_section_cm_text($mod, $displayoptions);
+
+        $output .= html_writer::end_tag('div'); // .mod-indent-outer
+        $output .= html_writer::end_tag('div');
+
+        return $output;
+    }
+
+    /**
+     * Renders html to display the module content on the course page (i.e. text of the labels)
+     *
+     * @param cm_info $mod
+     * @param array $displayoptions
+     * @return string
+     */
+    public function course_section_cm_text(cm_info $mod, $displayoptions = []) {
+        $output = '';
+        if (!$mod->is_visible_on_course_page()) {
+            // Nothing to display to the user.
+            return $output;
+        }
+        $content = $mod->get_formatted_content(['overflowdiv' => true, 'noclean' => true]);
+        $accesstext = '';
+        $textclasses = '';
+        if ($mod->uservisible) {
+            $conditionalhidden = $this->is_cm_conditionally_hidden_legacy($mod);
+            $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
+                has_capability('moodle/course:viewhiddenactivities', $mod->context);
+            if ($accessiblebutdim) {
+                $textclasses .= ' dimmed_text';
+                if ($conditionalhidden) {
+                    $textclasses .= ' conditionalhidden';
+                }
+                // Show accessibility note only if user can access the module himself.
+                $accesstext = get_accesshide(get_string('hiddenfromstudents').':'. $mod->modfullname);
+            }
+        }
+        if ($mod->url) {
+            if ($content) {
+                // If specified, display extra content after link.
+                $output = html_writer::tag('div', $content, ['class' => trim('contentafterlink ' . $textclasses)]);
+            }
+        } else {
+            $groupinglabel = $mod->get_grouping_label($textclasses);
+
+            // No link, so display only content.
+            $output = html_writer::tag('div', $accesstext . $content . $groupinglabel,
+                    ['class' => 'contentwithoutlink ' . $textclasses]);
+        }
+        return $output;
+    }
+
+    /**
+     * Renders HTML to show course module availability information (for someone who isn't allowed
+     * to see the activity itself, or for staff)
+     *
+     * @param cm_info $mod
+     * @param array $displayoptions
+     * @return string
+     */
+    public function course_section_cm_availability(cm_info $mod, $displayoptions = []) {
+        global $CFG;
+        $conditionalhidden = $this->is_cm_conditionally_hidden_legacy($mod);
+        $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
+            has_capability('moodle/course:viewhiddenactivities', $mod->context);
+
+        $output = '';
+        if ($accessiblebutdim) {
+            $output .= html_writer::start_span('dimmed_text');
+            if ($conditionalhidden) {
+                $output .= html_writer::start_span('conditionalhidden');
+            }
+        }
+        if (!$mod->uservisible) {
+            // This module is not visible. Show availability info.
+            $output .= html_writer::tag('div', $mod->availableinfo, ['class' => 'availabilityinfo']);
+        }
+        if ($accessiblebutdim) {
+            if ($conditionalhidden) {
+                $output .= html_writer::end_span(); // conditionalhidden
+            }
+            $output .= html_writer::end_span(); // dimmed_text
+        }
+        return $output;
+    }
+
+    /**
+     * Checks whether the module is conditionally hidden (i.e. hidden if condition not met)
+     *
+     * @param cm_info $mod
+     * @return bool
+     */
+    protected function is_cm_conditionally_hidden_legacy(cm_info $mod) {
+        global $CFG;
+        $conditionalhidden = false;
+        if (!empty($CFG->enableavailability)) {
+            $info = new \core_availability\info_module($mod);
+            $conditionalhidden = !$info->is_available_for_all();
+        }
+        return $conditionalhidden;
+    }
+
+    /**
+     * Renders HTML to display the module name on the course page (with a link if appropriate)
+     *
+     * @param cm_info $mod
+     * @param array $displayoptions
+     * @return string
+     */
+    public function course_section_cm_name(cm_info $mod, $displayoptions = []) {
+        if (!$mod->is_visible_on_course_page() || !$mod->url) {
+            // Nothing to display to the user or no link to display.
+            return $this->course_section_cm_name_title($mod, $displayoptions);
+        }
+
+        $classattributes = 'aalink';
+        if (!$mod->uservisible) {
+            $classattributes .= ' dimmed';
+        }
+        // Accessibility: for files get description via icon, this is very ugly hack!
+        $instancename = $mod->get_formatted_name();
+        $groupinglabel = $mod->get_grouping_label($classattributes);
+
+        // Avoid unnecessary duplication: if e.g. a forum name already
+        // includes the word forum (or Forum, etc) then it is unhelpful
+        // to include that in the accessible description that is added.
+        $altname = get_accesshide(' '.$mod->modfullname);
+
+        // Get on-click attribute value if specified and decode the onclick - it
+        // has already been encoded for display (puke).
+        $onclick = htmlspecialchars_decode($mod->onclick, ENT_QUOTES);
+
+        // Display link itself.
+        $activitylink = html_writer::empty_tag('img', ['src' => $mod->get_icon_url(),
+                'class' => 'iconlarge activityicon', 'alt' => '', 'role' => 'presentation', 'aria-hidden' => 'true']) .
+                $altname . html_writer::tag('span', $instancename . $groupinglabel, ['class' => 'instancename']);
+        if ($mod->uservisible) {
+            $output = html_writer::link($mod->url, $activitylink, ['class' => $classattributes, 'onclick' => $onclick]);
+        } else {
+            // We may be displaying this just in order to show information
+            // about visibility, without the actual link ($mod->uservisible)
+            $output = html_writer::tag('div', $activitylink, ['class' => $classattributes]);
+        }
+        return $output;
+    }
+
+    /**
+     * Renders HTML to display the module name without a link
+     *
+     * @param cm_info $mod
+     * @param array $displayoptions
+     * @return string
+     */
+    public function course_section_cm_name_title(cm_info $mod, $displayoptions = []) {
+        $output = '';
+        $url = $mod->url;
+        if (!$mod->is_visible_on_course_page() || !$url) {
+            // Nothing to display to the user.
+            $output .= html_writer::tag('span', get_accesshide(' '.$mod->modfullname));
+        }
+        $output .= html_writer::tag('span', $mod->get_formatted_name(), ['class' => 'instancename']);
+        return $output;
+    }
+
+    /**
+     * Renders HTML to display completion info for a course module
+     *
+     * @param stdClass $course
+     * @param completion_info $completioninfo
+     * @param cm_info $mod
+     * @param array $displayoptions
+     * @return string
+     */
+    protected function course_section_cm_completion_legacy($course, &$completioninfo, cm_info $mod, $displayoptions = []) {
+        $output = '';
+        if (!empty($displayoptions['hidecompletion']) || !isloggedin() || isguestuser() || !$mod->uservisible) {
+            return $output;
+        }
+        if ($completioninfo === null) {
+            $completioninfo = new completion_info($course);
+        }
+        $completion = $completioninfo->is_enabled($mod);
+        if ($completion == COMPLETION_TRACKING_NONE) {
+            return $output;
+        }
+
+        $completiondata = $completioninfo->get_data($mod, true);
+        $completionicon = '';
+
+        if ($this->page->user_is_editing()) {
+            switch ($completion) {
+                case COMPLETION_TRACKING_MANUAL :
+                    $completionicon = 'manual-enabled'; break;
+                case COMPLETION_TRACKING_AUTOMATIC :
+                    $completionicon = 'auto-enabled'; break;
+            }
+        } else if ($completion == COMPLETION_TRACKING_MANUAL) {
+            switch($completiondata->completionstate) {
+                case COMPLETION_INCOMPLETE:
+                    $completionicon = 'manual-n' . ($completiondata->overrideby ? '-override' : '');
+                    break;
+                case COMPLETION_COMPLETE:
+                    $completionicon = 'manual-y' . ($completiondata->overrideby ? '-override' : '');
+                    break;
+            }
+        } else { // Automatic
+            switch($completiondata->completionstate) {
+                case COMPLETION_INCOMPLETE:
+                    $completionicon = 'auto-n' . ($completiondata->overrideby ? '-override' : '');
+                    break;
+                case COMPLETION_COMPLETE:
+                    $completionicon = 'auto-y' . ($completiondata->overrideby ? '-override' : '');
+                    break;
+                case COMPLETION_COMPLETE_PASS:
+                    $completionicon = 'auto-pass'; break;
+                case COMPLETION_COMPLETE_FAIL:
+                    $completionicon = 'auto-fail'; break;
+            }
+        }
+        if ($completionicon) {
+            $formattedname = html_entity_decode($mod->get_formatted_name(), ENT_QUOTES, 'UTF-8');
+            if (!$this->page->user_is_editing() && $completion == COMPLETION_TRACKING_MANUAL) {
+                $newstate = $completiondata->completionstate == COMPLETION_COMPLETE ? COMPLETION_INCOMPLETE : COMPLETION_COMPLETE;
+                $accessibility = get_string('modcompletionaccessibility', 'completion', [
+                    'modname' => $formattedname,
+                    'status' => get_string('completion-alt-' . $completionicon, 'completion')
+                ]);
+                // Use the icon with the accessible 'Complete' or 'Incomplete' label.
+                $completionpixicon = new pix_icon('i/completion-' . $completionicon, $accessibility, 'moodle', ['title' => '']);
+                $output .= html_writer::link(
+                    new moodle_url($mod->url, ['sesskey' => sesskey()]),
+                    $this->output->render($completionpixicon),
+                    ['class' => 'autocompletion']
+                );
+            } else {
+                // The completion info is not interactive. Just display the icon.
+                $completionpixicon = new pix_icon('i/completion-' . $completionicon,
+                    get_string('completion-alt-' . $completionicon, 'completion'), 'moodle');
+                $output .= html_writer::tag('span', $this->output->render($completionpixicon),
+                    ['class' => 'autocompletion']);
+            }
+        }
+        return $output;
+    }
+
+    /**
+     * Renders HTML to display the 'Add an activity or resource' control.
+     *
+     * @param stdClass $course
+     * @param int $section
+     * @param int $sectionreturn
+     * @param array $displayoptions
+     * @return string
+     */
+    public function course_section_add_cm_control($course, $section, $sectionreturn = null, $displayoptions = []) {
+        global $CFG;
+
+        $output = '';
+        if (!$this->page->user_is_editing()) {
+            return $output;
+        }
+
+        if (has_capability('moodle/course:manageactivities', context_course::instance($course->id))) {
+            $url = new moodle_url('/course/mod.php', ['id' => $course->id, 'section' => $section, 'sesskey' => sesskey()]);
+
+            $options = ['class' => 'add-activity btn btn-link'];
+            $actions = course_get_cm_types_for_section($course, $section, $sectionreturn);
+
+            // If there is only one action, render it as a button.
+            if (count($actions) == 1) {
+                $action = reset($actions);
+                $url = new moodle_url($action['link']);
+                $output .= html_writer::link($url, $action['icon'] . ' ' . $action['name'], $options);
+            } else {
+                // Otherwise render it as a menu.
+                $selectoutput = html_writer::start_tag('div', ['class' => 'section-modchooser']);
+                $selectoutput .= html_writer::link($url, get_string('addresourceoractivity'), $options);
+                $selectoutput .= html_writer::end_tag('div');
+                $output .= $selectoutput;
+            }
+        }
+
+        return $output;
     }
 }
