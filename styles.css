@@ -40,10 +40,6 @@
     margin: 0 5px;
 }
 
-.course-content ul.buttons li.section .content {
-
-}
-
 @media screen and (max-width: 740px) {
   .course-content ul.buttons li.section .content {
       margin: 0 5px;
@@ -87,12 +83,19 @@
     border: 0 !important;
 }
 
-#buttonsectioncontainer, #bottombuttonsectioncontainer {
-    display: none;
-    margin: 20px auto;
+/* Button containers */
+#buttonsectioncontainer,
+#bottombuttonsectioncontainer {
+    display: block;
+    margin: 20px 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
 }
 
-/* ADDED */
+/* CSS Variables for colors */
 #buttonsectioncontainer, #bottombuttonsectioncontainer {
   /* background: #115898; */
 
@@ -190,7 +193,7 @@
 #buttonsectioncontainer .divisortext {
     display: table-cell;
     vertical-align: middle;
-    padding: 0;
+    padding: 0 15px 0 25px;
     font-weight: 400;
     font-size: 16px;
     line-height: 18px;
@@ -198,6 +201,17 @@
     height: 52px;
     text-align: right;
     color: rgba(0, 0, 0, 0.6);
+}
+
+/* Button groups with divisors */
+#buttonsectioncontainer .buttonsx-buttons {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 20px;
+}
+
+#buttonsectioncontainer .buttonsx-buttons:last-child {
+    margin-right: 0;
 }
 
 /* colors */
@@ -321,4 +335,27 @@
 .editing .course-content ul.buttons li.section.main:not(#section-0) {
     display: block;
     border-bottom: 1px dotted #dee2e6 !important;
+}
+
+/* Hide H5P labels when configured */
+.buttonsx-hide-h5p .activity.h5pactivity .activityname {
+    display: none;
+}
+
+.buttonsx-hide-h5p .activity.h5pactivity .contentwithoutlink {
+    display: none;
+}
+
+.buttonsx-hide-h5p .activity.h5pactivity .instancename {
+    display: none;
+}
+
+/* Activity completion positioning */
+.buttonsx-completion-left .activity .actions {
+    float: left;
+    margin-right: 10px;
+}
+
+.buttonsx-completion-left .activity .mod-indent-outer {
+    padding-left: 40px;
 }

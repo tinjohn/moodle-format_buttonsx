@@ -28,7 +28,7 @@
     * uniqid - Unique ID for this instance
     * sectionreturn - Section return value
 }}
-<div id="course-format-{{uniqid}}" class="buttonsx-course-format">
+<div id="course-format-{{uniqid}}" class="buttonsx-course-format {{^displayh5picons}}buttonsx-hide-h5p{{/displayh5picons}} {{#act_complinfo_position}}buttonsx-completion-left{{/act_complinfo_position}}" data-buttonstyle="{{buttonstyle}}">
     
     {{#buttonnavdata}}
         {{> format_buttonsx/buttonnav }}
@@ -49,6 +49,21 @@
             {{/ core_courseformat/local/content/section }}
         {{/sections}}
     </ul>
+    
+    {{#buttonnavdata}}
+        {{#showbottommenu}}
+        <div id="bottombuttonsectioncontainer" class="{{#iscircle}}circle{{/iscircle}}">
+            {{#sections}}
+                <a href="#section-{{num}}" 
+                   id="bottombuttonsection-{{num}}" 
+                   class="buttonsection sectionnotvisible"
+                   data-section="{{num}}">
+                    {{{text}}}
+                </a>
+            {{/sections}}
+        </div>
+        {{/showbottommenu}}
+    {{/buttonnavdata}}
     
     {{#numsections}}
         {{^singlesection}}

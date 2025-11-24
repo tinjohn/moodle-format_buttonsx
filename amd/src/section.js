@@ -60,8 +60,8 @@ const initNavigation = () => {
         }
     }
     
-    // Add click handlers to buttons
-    document.querySelectorAll('.buttonsection, .bottombuttonsection').forEach(button => {
+    // Add click handlers to buttons (including bottom menu buttons)
+    document.querySelectorAll('.buttonsection').forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
             const sectionNum = parseInt(button.getAttribute('data-section'));
@@ -141,22 +141,45 @@ const showSection = (sectionNum) => {
  * @param {number} sectionNum The current section number
  */
 const updateButtonStates = (sectionNum) => {
-    // Remove current class from all buttons
-    document.querySelectorAll('.buttonsection, .bottombuttonsection').forEach(button => {
+    // Remove current class from all buttons (including bottom menu)
+    document.querySelectorAll('#buttonsectioncontainer .buttonsection').forEach(button => {
         button.classList.remove('buttoncurrent', 'sectionvisible', 'current');
-        button.classList.add('sectionnotvisible');
     });
     
-    // Add current class to active button
-    const currentButton = document.querySelector('.buttonsection[data-section="' + sectionNum + '"]');
+    document.querySelectorAll('#bottombuttonsectioncontainer .buttonsection').forEach(button => {
+        button.classList.remove('buttoncurrent', 'sectionvisible', 'current');
+        button.classList.add('sectionnotvisible');
+        button.classList.remove('sectionbeforevisible', 'sectionaftervisible');
+    });
+    
+    // Add current class to active top button
+    const currentButton = document.querySelector('#buttonsectioncontainer .buttonsection[data-section="' + sectionNum + '"]');
     if (currentButton) {
         currentButton.classList.add('buttoncurrent', 'sectionvisible', 'current');
-        currentButton.classList.remove('sectionnotvisible');
     }
     
-    const currentBottomButton = document.querySelector('.bottombuttonsection[data-section="' + sectionNum + '"]');
-    if (currentBottomButton) {
-        currentBottomButton.classList.add('buttoncurrent', 'sectionvisible', 'current');
-        currentBottomButton.classList.remove('sectionnotvisible');
+    // Update bottom menu if it exists
+    const bottomContainer = document.querySelector('#bottombuttonsectioncontainer');
+    if (bottomContainer) {
+        // Current button in bottom menu
+        const currentBottomButton = bottomContainer.querySelector('.buttonsection[data-section="' + sectionNum + '"]');
+        if (currentBottomButton) {
+            currentBottomButton.classList.add('buttoncurrent', 'sectionvisible', 'current');
+            currentBottomButton.classList.remove('sectionnotvisible');
+        }
+        
+        // Previous button (arrow left)
+        const prevBottomButton = bottomContainer.querySelector('.buttonsection[data-section="' + (sectionNum - 1) + '"]');
+        if (prevBottomButton) {
+            prevBottomButton.classList.add('sectionbeforevisible');
+            prevBottomButton.classList.remove('sectionnotvisible');
+        }
+        
+        // Next button (arrow right)
+        const nextBottomButton = bottomContainer.querySelector('.buttonsection[data-section="' + (sectionNum + 1) + '"]');
+        if (nextBottomButton) {
+            nextBottomButton.classList.add('sectionaftervisible');
+            nextBottomButton.classList.remove('sectionnotvisible');
+        }
     }
 };

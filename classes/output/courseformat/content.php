@@ -107,6 +107,8 @@ class content extends content_base {
         $navdata->course = $course;
         $navdata->sections = [];
         $navdata->divisors = [];
+        $navdata->iscircle = ($course->buttonstyle === 'circle');
+        $navdata->showbottommenu = (!empty($course->usebottommenu) && $course->usebottommenu == 1);
         
         $sections = $modinfo->get_section_info_all();
         $currentdivisor = 1;
@@ -143,7 +145,17 @@ class content extends content_base {
             }
             
             // Add button
-            $buttontext = $this->get_button_text($course, $section->section);
+            // Check if this divisor has only one section
+            $divisorsize = isset($course->{'divisor' . $currentdivisor}) ? $course->{'divisor' . $currentdivisor} : 0;
+            if ($divisorsize == 1) {
+                // Single button in divisor - use special text
+                $buttontext = isset($course->{'divisorsinglebuttext' . $currentdivisor}) 
+                    ? format_string($course->{'divisorsinglebuttext' . $currentdivisor})
+                    : '&bull;&bull;&bull;';
+            } else {
+                $buttontext = $this->get_button_text($course, $section->section);
+            }
+            
             $currentbuttons[] = [
                 'num' => $section->section,
                 'text' => $buttontext,
