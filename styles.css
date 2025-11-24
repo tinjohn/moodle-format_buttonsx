@@ -83,6 +83,11 @@
     border: 0 !important;
 }
 
+/* Hide all section headers (collapse button and title) */
+.course-section-header.d-flex {
+    display: none !important;
+}
+
 /* Button containers */
 #buttonsectioncontainer,
 #bottombuttonsectioncontainer {
