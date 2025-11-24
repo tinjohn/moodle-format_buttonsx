@@ -27,11 +27,13 @@ let currentSection = null;
  * Initialize ButtonsX section navigation.
  */
 export const init = () => {
-    // Wait for DOM to be ready
+    // Wait for DOM to be ready with a delay to ensure all elements are rendered
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initNavigation);
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initNavigation, 100);
+        });
     } else {
-        initNavigation();
+        setTimeout(initNavigation, 100);
     }
 };
 
@@ -39,41 +41,42 @@ export const init = () => {
  * Initialize navigation after DOM is ready.
  */
 const initNavigation = () => {
-    // Hide all sections except section 0
-    hideAllSections();
-    
-    // Show first section by default
-    const firstButton = document.querySelector('.buttonsection');
-    if (firstButton) {
-        const sectionNum = firstButton.getAttribute('data-section');
-        if (sectionNum) {
-            showSection(parseInt(sectionNum));
-        }
+    // Find all buttons
+    const buttons = document.querySelectorAll('.buttonsection');
+
+    if (buttons.length === 0) {
+        // No buttons found, retry after delay
+        setTimeout(initNavigation, 100);
+        return;
     }
-    
-    // Check URL hash
+
+    // Determine which section to show
+    let sectionToShow = 1; // Default to section 1
+
+    // Check URL hash first
     const hash = window.location.hash;
     if (hash.startsWith('#section-')) {
-        const sectionNum = parseInt(hash.replace('#section-', ''));
-        if (!isNaN(sectionNum) && sectionNum > 0) {
-            showSection(sectionNum);
+        const hashNum = parseInt(hash.replace('#section-', ''));
+        if (!isNaN(hashNum) && hashNum > 0) {
+            sectionToShow = hashNum;
         }
     }
-    
-    // Add click handlers to buttons (including bottom menu buttons)
-    document.querySelectorAll('.buttonsection').forEach(button => {
+
+    // Show the initial section
+    showSection(sectionToShow);
+
+    // Add click handlers to all buttons
+    buttons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
             const sectionNum = parseInt(button.getAttribute('data-section'));
-            if (!isNaN(sectionNum)) {
+            if (!isNaN(sectionNum) && sectionNum > 0) {
                 showSection(sectionNum);
-                
-                // Update URL hash
                 window.history.pushState(null, null, '#section-' + sectionNum);
             }
         });
     });
-    
+
     // Listen for hash changes
     window.addEventListener('hashchange', () => {
         const hash = window.location.hash;
@@ -90,7 +93,13 @@ const initNavigation = () => {
  * Hide all sections except section 0.
  */
 const hideAllSections = () => {
-    document.querySelectorAll('li.section.main').forEach(section => {
+    // Find all sections in the course content list
+    const sectionList = document.querySelector('ul[data-for="course_sectionlist"]');
+    if (!sectionList) {
+        return;
+    }
+
+    sectionList.querySelectorAll('li.section').forEach(section => {
         const sectionId = section.getAttribute('id');
         if (sectionId && sectionId !== 'section-0') {
             section.style.display = 'none';
@@ -104,25 +113,25 @@ const hideAllSections = () => {
  * @param {number} sectionNum The section number to show
  */
 const showSection = (sectionNum) => {
-    if (currentSection === sectionNum) {
-        return;
-    }
-    
-    currentSection = sectionNum;
-    
-    // Hide all sections except section 0
+    // First hide all sections (except section-0)
     hideAllSections();
-    
+
+    currentSection = sectionNum;
+
     // Show the selected section
     const section = document.querySelector('#section-' + sectionNum);
+
     if (section) {
         section.style.display = 'block';
-        
-        // Scroll to section
-        setTimeout(() => {
-            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-        
+
+        // Scroll to button container
+        const buttonContainer = document.querySelector('#buttonsectioncontainer');
+        if (buttonContainer) {
+            setTimeout(() => {
+                buttonContainer.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }, 100);
+        }
+
         // Trigger H5P resize if available
         if (window.H5P && window.H5P.externalDispatcher) {
             setTimeout(() => {
@@ -130,7 +139,7 @@ const showSection = (sectionNum) => {
             }, 200);
         }
     }
-    
+
     // Update button states
     updateButtonStates(sectionNum);
 };
@@ -145,19 +154,19 @@ const updateButtonStates = (sectionNum) => {
     document.querySelectorAll('#buttonsectioncontainer .buttonsection').forEach(button => {
         button.classList.remove('buttoncurrent', 'sectionvisible', 'current');
     });
-    
+
     document.querySelectorAll('#bottombuttonsectioncontainer .buttonsection').forEach(button => {
         button.classList.remove('buttoncurrent', 'sectionvisible', 'current');
         button.classList.add('sectionnotvisible');
         button.classList.remove('sectionbeforevisible', 'sectionaftervisible');
     });
-    
+
     // Add current class to active top button
     const currentButton = document.querySelector('#buttonsectioncontainer .buttonsection[data-section="' + sectionNum + '"]');
     if (currentButton) {
         currentButton.classList.add('buttoncurrent', 'sectionvisible', 'current');
     }
-    
+
     // Update bottom menu if it exists
     const bottomContainer = document.querySelector('#bottombuttonsectioncontainer');
     if (bottomContainer) {
@@ -167,14 +176,14 @@ const updateButtonStates = (sectionNum) => {
             currentBottomButton.classList.add('buttoncurrent', 'sectionvisible', 'current');
             currentBottomButton.classList.remove('sectionnotvisible');
         }
-        
+
         // Previous button (arrow left)
         const prevBottomButton = bottomContainer.querySelector('.buttonsection[data-section="' + (sectionNum - 1) + '"]');
         if (prevBottomButton) {
             prevBottomButton.classList.add('sectionbeforevisible');
             prevBottomButton.classList.remove('sectionnotvisible');
         }
-        
+
         // Next button (arrow right)
         const nextBottomButton = bottomContainer.querySelector('.buttonsection[data-section="' + (sectionNum + 1) + '"]');
         if (nextBottomButton) {

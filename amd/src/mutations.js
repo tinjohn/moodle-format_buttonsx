@@ -21,48 +21,53 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
-
 // Setup format mutations.
 export const init = () => {
-    // Add any custom mutations for buttonsx format here.
-    const courseEditor = getCurrentCourseEditor();
-    
-    if (courseEditor) {
-        // Initialize H5P resize observer when sections become visible
-        observeH5PContent();
-    }
+    // Initialize H5P resize observer
+    observeH5PContent();
 };
 
 /**
  * Observe H5P content and ensure proper resizing.
  */
 const observeH5PContent = () => {
-    // Watch for H5P iframes that need resizing
-    const resizeH5P = () => {
-        const h5pIframes = document.querySelectorAll('.h5p-iframe');
-        h5pIframes.forEach((iframe) => {
-            if (iframe.contentWindow && iframe.contentWindow.H5P) {
-                iframe.contentWindow.H5P.externalDispatcher.on('resize', () => {
-                    // Trigger H5P resize
-                    if (window.H5P && window.H5P.externalDispatcher) {
-                        window.H5P.externalDispatcher.trigger('resize');
+    try {
+        // Watch for H5P iframes that need resizing
+        const resizeH5P = () => {
+            try {
+                const h5pIframes = document.querySelectorAll('.h5p-iframe');
+                h5pIframes.forEach((iframe) => {
+                    try {
+                        if (iframe.contentWindow && iframe.contentWindow.H5P) {
+                            iframe.contentWindow.H5P.externalDispatcher.on('resize', () => {
+                                // Trigger H5P resize
+                                if (window.H5P && window.H5P.externalDispatcher) {
+                                    window.H5P.externalDispatcher.trigger('resize');
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        // Ignore cross-origin iframe access errors
                     }
                 });
+            } catch (e) {
+                // Ignore any H5P resize errors
             }
+        };
+
+        // Observe DOM changes for dynamically loaded H5P content
+        const observer = new MutationObserver(() => {
+            resizeH5P();
         });
-    };
 
-    // Observe DOM changes for dynamically loaded H5P content
-    const observer = new MutationObserver(() => {
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        // Initial resize
         resizeH5P();
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-
-    // Initial resize
-    resizeH5P();
+    } catch (e) {
+        // Ignore H5P observer errors - this is optional functionality
+    }
 };

@@ -76,11 +76,23 @@
     white-space: nowrap;
 }
 
+/* Hide all sections except section-0 initially (legacy selector) */
 .course-content ul.buttons li.section.main:not(#section-0) {
     background: none;
     list-style: none;
     display: none;
     border: 0 !important;
+}
+
+/* Hide all sections except section-0 initially (Moodle 4.4 selector) */
+/* Note: NO !important so JavaScript can override with style.display */
+.path-course-view ul[data-for="course_sectionlist"] > li.section:not(#section-0) {
+    display: none;
+}
+
+/* Ensure section-0 is always visible */
+#section-0 {
+    display: block !important;
 }
 
 /* Hide all section headers (collapse button and title) */
@@ -336,9 +348,15 @@
 }
 
 
-/* editing */
+/* editing - show all sections in edit mode (legacy selector) */
 .editing .course-content ul.buttons li.section.main:not(#section-0) {
-    display: block;
+    display: block !important;
+    border-bottom: 1px dotted #dee2e6 !important;
+}
+
+/* editing - show all sections in edit mode (Moodle 4.4 selector) */
+.editing ul[data-for="course_sectionlist"] li.section:not(#section-0) {
+    display: block !important;
     border-bottom: 1px dotted #dee2e6 !important;
 }
 

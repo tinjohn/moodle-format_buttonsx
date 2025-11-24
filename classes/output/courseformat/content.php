@@ -62,7 +62,8 @@ class content extends content_base {
         global $PAGE;
         
         // Load ButtonsX JavaScript modules
-        $PAGE->requires->js_call_amd('format_buttonsx/mutations', 'init');
+        // Note: mutations.js temporarily disabled to avoid course editor conflicts
+        // $PAGE->requires->js_call_amd('format_buttonsx/mutations', 'init');
         $PAGE->requires->js_call_amd('format_buttonsx/section', 'init');
         
         $data = parent::export_for_template($output);
