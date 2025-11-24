@@ -360,17 +360,27 @@
     border-bottom: 1px dotted #dee2e6 !important;
 }
 
-/* Hide H5P labels when configured */
+/* Hide H5P labels and icons when configured */
 .buttonsx-hide-h5p .activity.h5pactivity .activityname {
-    display: none;
+    display: none !important;
 }
 
 .buttonsx-hide-h5p .activity.h5pactivity .contentwithoutlink {
-    display: none;
+    display: none !important;
 }
 
 .buttonsx-hide-h5p .activity.h5pactivity .instancename {
-    display: none;
+    display: none !important;
+}
+
+/* Hide H5P activity icon */
+.buttonsx-hide-h5p .activity.h5pactivity .activityicon {
+    display: none !important;
+}
+
+/* Hide entire activity instance label area */
+.buttonsx-hide-h5p .activity.h5pactivity .activity-instance {
+    display: none !important;
 }
 
 /* Activity completion positioning */
