@@ -91,3 +91,10 @@ $string['hililast_help'] = "Highlight color -current- configured at the end of t
 $string['divisorsinglebuttext'] = "label of single button";
 $string['divisorsinglebuttext_help'] = "Groups containing one button only will get the label &bull;&bull;&bull; because numbering is inapproiate in this case. Choose a short string you like to see in the button.";
 // END ADDED.
+
+// Version 4.4 additions.
+$string['indentation'] = 'Allow indentation on course page';
+$string['indentation_help'] = 'Allow teachers, and other users with the manage activities capability, to indent items on the course page.';
+$string['sequential_help'] = 'Sequential access enforces that students must complete previous sections before accessing new ones.';
+$string['sectiontype_help'] = 'Choose how section numbers are displayed in buttons: numeric (1,2,3), roman numerals (I,II,III), or alphabet (A,B,C).';
+$string['newsection'] = 'New section';

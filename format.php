@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * format_buttonsx_renderer
+ * Display the whole course as "ButtonsX" made of modules.
  *
  * @package    format_buttonsx
- * @author     Rodrigo Brandão <https://www.linkedin.com/in/brandaorodrigo>
- * @copyright  2020 Rodrigo Brandão <rodrigo.brandao.contato@gmail.com>
+ * @author     Tina John
+ * @copyright  2024 Tina John
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
+// Legacy topic parameter handling
 if ($topic = optional_param('topic', 0, PARAM_INT)) {
     $url = $PAGE->url;
     $url->param('section', $topic);
@@ -37,21 +38,27 @@ if ($topic = optional_param('topic', 0, PARAM_INT)) {
 
 $context = context_course::instance($course->id);
 
+// Highlight section handling
 if (($marker >= 0) && has_capability('moodle/course:setcurrentsection', $context) && confirm_sesskey()) {
     $course->marker = $marker;
     course_set_marker($course->id, $marker);
 }
 
-$course = course_get_format($course)->get_course();
+// Retrieve course format option fields and add them to the $course object.
+$format = course_get_format($course);
+$course = $format->get_course();
 
-course_create_sections_if_missing($course, range(0, $course->numsections));
+// Make sure section 0 is created.
+course_create_sections_if_missing($course, 0);
 
-$renderer = $PAGE->get_renderer('format_buttonsx');
+// Render ButtonsX styles
+echo $OUTPUT->render_from_template('format_buttonsx/buttonsx_styles', (array)$course);
 
-if (!empty($displaysection)) {
-    $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
-} else {
-    $renderer->print_multiple_section_page($course, null, null, null, null);
+$renderer = $format->get_renderer($PAGE);
+
+if (!is_null($displaysection)) {
+    $format->set_sectionnum($displaysection);
 }
-
-$PAGE->requires->js('/course/format/buttonsx/format.js');
+$outputclass = $format->get_output_classname('content');
+$widget = new $outputclass($format);
+echo $renderer->render($widget);

@@ -23,9 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace format_buttonsx\output;
+
 defined('MOODLE_INTERNAL') || die();
 
 use core_courseformat\output\section_renderer;
+use moodle_page;
 
 /**
  * Basic renderer for ButtonsX format.
@@ -34,13 +37,24 @@ use core_courseformat\output\section_renderer;
  * @copyright  2024 Tina John
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_buttonsx_renderer extends section_renderer {
+class renderer extends section_renderer {
+
+    /**
+     * Constructor method, calls the parent constructor.
+     *
+     * @param moodle_page $page
+     * @param string $target one of rendering target constants
+     */
+    public function __construct(moodle_page $page, $target) {
+        parent::__construct($page, $target);
+        $page->set_other_editing_capability('moodle/course:setcurrentsection');
+    }
 
     /**
      * Generate the section title, wraps it in a link to the section page if page is to be displayed on a separate page.
      *
-     * @param section_info|stdClass $section The course_section entry from DB
-     * @param stdClass $course The course entry from DB
+     * @param \section_info|\stdClass $section The course_section entry from DB
+     * @param \stdClass $course The course entry from DB
      * @return string HTML to output.
      */
     public function section_title($section, $course) {
@@ -50,8 +64,8 @@ class format_buttonsx_renderer extends section_renderer {
     /**
      * Generate the section title to be displayed on the section page, without a link.
      *
-     * @param section_info|stdClass $section The course_section entry from DB
-     * @param int|stdClass $course The course entry from DB
+     * @param \section_info|\stdClass $section The course_section entry from DB
+     * @param int|\stdClass $course The course entry from DB
      * @return string HTML to output.
      */
     public function section_title_without_link($section, $course) {

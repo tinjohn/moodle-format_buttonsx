@@ -25,17 +25,164 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot. '/course/format/topics/lib.php');
+require_once($CFG->dirroot. '/course/format/lib.php');
+
+use core\output\inplace_editable;
 
 /**
  * format_buttonsx
  *
  * @package    format_buttonsx
- * @author     Rodrigo Brandão (rodrigobrandao.com.br)
- * @copyright  2017 Rodrigo Brandão
+ * @author     Tina John
+ * @author     based on work by Rodrigo Brandão
+ * @copyright  2024 Tina John
+ * @copyright  based on work 2017 Rodrigo Brandão
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class format_buttonsx extends format_topics {
+class format_buttonsx extends core_courseformat\base {
+
+    /**
+     * Returns true if this course format uses sections.
+     *
+     * @return bool
+     */
+    public function uses_sections() {
+        return true;
+    }
+
+    /**
+     * Returns true if this course format uses course index.
+     *
+     * @return bool
+     */
+    public function uses_course_index() {
+        return true;
+    }
+
+    /**
+     * Returns true if this course format uses activity indentation.
+     *
+     * @return bool
+     */
+    public function uses_indentation(): bool {
+        return (get_config('format_buttonsx', 'indentation')) ? true : false;
+    }
+
+    /**
+     * Returns the information about the ajax support in the given source format.
+     *
+     * @return stdClass
+     */
+    public function supports_ajax() {
+        $ajaxsupport = new stdClass();
+        $ajaxsupport->capable = true;
+        return $ajaxsupport;
+    }
+
+    /**
+     * Whether this format supports components.
+     *
+     * @return bool
+     */
+    public function supports_components() {
+        return true;
+    }
+
+    /**
+     * Returns the display name of the given section.
+     *
+     * @param int|stdClass $section Section object from database or just field section.section
+     * @return string Display name
+     */
+    public function get_section_name($section) {
+        $section = $this->get_section($section);
+        if ((string)$section->name !== '') {
+            return format_string($section->name, true,
+                ['context' => context_course::instance($this->courseid)]);
+        } else {
+            return $this->get_default_section_name($section);
+        }
+    }
+
+    /**
+     * Returns the default section name.
+     *
+     * @param int|stdClass $section Section object from database or just field course_sections section
+     * @return string The default value for the section name.
+     */
+    public function get_default_section_name($section) {
+        $section = $this->get_section($section);
+        if ($section->section == 0) {
+            return get_string('section0name', 'format_buttonsx');
+        }
+        
+        $course = $this->get_course();
+        $sectiontype = $course->sectiontype ?? 'numeric';
+        
+        switch ($sectiontype) {
+            case 'roman':
+                return $this->number_to_roman($section->section);
+            case 'alphabet':
+                return $this->number_to_alphabet($section->section);
+            default:
+                return $section->section;
+        }
+    }
+
+    /**
+     * Generate the title for this section page.
+     *
+     * @return string the page title
+     */
+    public function page_title(): string {
+        return get_string('sectionoutline');
+    }
+
+    /**
+     * Number to roman numeral conversion.
+     *
+     * @param int $number
+     * @return string
+     */
+    protected function number_to_roman($number) {
+        $number = intval($number);
+        $return = '';
+        $romanarray = [
+            'M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400,
+            'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40,
+            'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1
+        ];
+        foreach ($romanarray as $roman => $value) {
+            $matches = intval($number / $value);
+            $return .= str_repeat($roman, $matches);
+            $number = $number % $value;
+        }
+        return $return;
+    }
+
+    /**
+     * Number to alphabet conversion.
+     *
+     * @param int $number
+     * @return string
+     */
+    protected function number_to_alphabet($number) {
+        $number = $number - 1;
+        $alphabet = range("A", "Z");
+        if ($number <= 25) {
+            return $alphabet[$number];
+        } else if ($number > 25) {
+            $dividend = ($number + 1);
+            $alpha = '';
+            while ($dividend > 0) {
+                $modulo = ($dividend - 1) % 26;
+                $alpha = $alphabet[$modulo] . $alpha;
+                $dividend = floor((($dividend - $modulo) / 26));
+            }
+            return $alpha;
+        }
+        return '';
+    }
 
     /**
      * course_format_options
@@ -46,10 +193,11 @@ class format_buttonsx extends format_topics {
     public function course_format_options($foreditform = false) {
         global $PAGE;
 
-        static $courseformatoptions = false;
+        static $courseformatoptions = null;
 
-        if ($courseformatoptions === false) {
+        if ($courseformatoptions === null) {
             $courseconfig = get_config('moodlecourse');
+            $courseformatoptions = [];
 
             $courseformatoptions['numsections'] = array(
                 'default' => $courseconfig->numsections,
@@ -169,6 +317,8 @@ class format_buttonsx extends format_topics {
                 $sectionmenu[$i] = "$i";
             }
 
+            $courseformatoptionsedit = [];
+            
             $courseformatoptionsedit['numsections'] = array(
                 'label' => new lang_string('numberweeks'),
                 'element_type' => 'select',
@@ -483,7 +633,7 @@ function format_buttonsx_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'sectionname' || $itemtype === 'sectionnamenl') {
         $section = $DB->get_record_sql(
             'SELECT s.* FROM {course_sections} s JOIN {course} c ON s.course = c.id WHERE s.id = ? AND c.format = ?',
-            array($itemid, 'buttons'),
+            array($itemid, 'buttonsx'),
             MUST_EXIST
         );
         return course_get_format($section->course)->inplace_editable_update_section_name($section, $itemtype, $newvalue);

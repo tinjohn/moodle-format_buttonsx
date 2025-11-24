@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * format_buttonsx_renderer
+ * Version information for ButtonsX course format.
  *
  * @package    format_buttonsx
  * @author     Tina John
  * @author     based on the work of Rodrigo Brandão <https://www.linkedin.com/in/brandaorodrigo>
- * @copyright  2022 Tina John <johnt.22.tijo@gmail.com>
+ * @copyright  2024 Tina John <johnt.22.tijo@gmail.com>
  * @copyright  based on the work 2020 Rodrigo Brandão <rodrigo.brandao.contato@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->requires = 2015111600; /* moodle 3.0 */
+$plugin->requires = 2015111600; // Moodle 4.4+
 $plugin->component = 'format_buttonsx';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = 'v2';
-$plugin->version = 2022120800;
+$plugin->release = '4.4.0';
+$plugin->version = 2024112400;

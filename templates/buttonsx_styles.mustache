@@ -1,0 +1,96 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_buttonsx/buttonsx_styles
+
+    ButtonsX format inline styles template.
+
+    Context variables required for this template:
+    * course - Course object with format options
+
+    Example context (json):
+    {
+        "course": {}
+    }
+}}
+<style>
+    /* ButtonsX specific styling */
+    #buttonsectioncontainer, #bottombuttonsectioncontainer {
+        display: table;
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .buttonsection, .bottombuttonsection {
+        display: inline-block;
+        margin: 5px;
+        padding: 10px 15px;
+        border-radius: {{#course.buttonstyle}}{{#circle}}50%{{/circle}}{{^circle}}5px{{/circle}}{{/course.buttonstyle}};
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .buttonsection.sectionvisible {
+        font-weight: bold;
+        {{#course.colorvisible}}
+        background: {{{course.colorvisible}}};
+        {{/course.colorvisible}}
+    }
+    
+    .buttonsection.current {
+        {{#course.colorcurrent}}
+        background: {{{course.colorcurrent}}};
+        {{/course.colorcurrent}}
+    }
+    
+    .bottombuttonsection.sectionnotvisible {
+        opacity: 0.5;
+    }
+    
+    {{^editing}}
+    {{^course.displayh5picons}}
+    .h5pactivity .activity-instance {
+        display: none !important;
+    }
+    {{/course.displayh5picons}}
+    
+    {{^course.act_complinfo_position}}
+    .activity-item {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    {{/course.act_complinfo_position}}
+    {{/editing}}
+    
+    .inlinebuttonsections .buttonsection {
+        display: inline-flex;
+    }
+    
+    .divisortext {
+        font-weight: bold;
+        margin: 15px 0 5px 0;
+        padding: 10px;
+        background: rgba(0,0,0,0.05);
+        border-left: 3px solid #007bff;
+    }
+    
+    /* Sequential access styling */
+    .buttonsection.sequential-locked {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+</style>

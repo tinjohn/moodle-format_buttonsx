@@ -1,0 +1,42 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    ButtonsX button navigation template.
+
+    @template format_buttonsx/buttonnav
+
+    Context variables:
+    * divisors - Array of divisor groups with buttons
+    * sections - Array of sections for bottom menu
+    * course - Course object with all settings
+}}
+<div id="buttonsectioncontainer" class="buttonsx-navigation">
+    {{#divisors}}
+        {{#text}}
+        <div class="divisortext">{{{text}}}</div>
+        {{/text}}
+        <div class="buttonsx-buttons {{#course.inlinesections}}inlinebuttonsections{{/course.inlinesections}}">
+            {{#buttons}}
+                <a href="#section-{{num}}" 
+                   id="buttonsection-{{num}}" 
+                   class="buttonsection {{#iscurrent}}buttoncurrent{{/iscurrent}} {{^isvisible}}buttondimmed{{/isvisible}}"
+                   data-section="{{num}}">
+                    {{text}}
+                </a>
+            {{/buttons}}
+        </div>
+    {{/divisors}}
+</div>
+
+{{#course.usebottommenu}}
+<div id="bottombuttonsectioncontainer" class="buttonsx-bottom-navigation">
+    {{#sections}}
+        <a href="#section-{{num}}" 
+           id="bottombuttonsection-{{num}}" 
+           class="bottombuttonsection"
+           data-section="{{num}}">
+            {{text}}
+        </a>
+    {{/sections}}
+</div>
+{{/course.usebottommenu}}

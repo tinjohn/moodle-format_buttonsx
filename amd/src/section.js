@@ -1,0 +1,162 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * ButtonsX format section visibility and navigation component.
+ *
+ * @module     format_buttonsx/section
+ * @copyright  2024 Tina John
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+let currentSection = null;
+
+/**
+ * Initialize ButtonsX section navigation.
+ */
+export const init = () => {
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initNavigation);
+    } else {
+        initNavigation();
+    }
+};
+
+/**
+ * Initialize navigation after DOM is ready.
+ */
+const initNavigation = () => {
+    // Hide all sections except section 0
+    hideAllSections();
+    
+    // Show first section by default
+    const firstButton = document.querySelector('.buttonsection');
+    if (firstButton) {
+        const sectionNum = firstButton.getAttribute('data-section');
+        if (sectionNum) {
+            showSection(parseInt(sectionNum));
+        }
+    }
+    
+    // Check URL hash
+    const hash = window.location.hash;
+    if (hash.startsWith('#section-')) {
+        const sectionNum = parseInt(hash.replace('#section-', ''));
+        if (!isNaN(sectionNum) && sectionNum > 0) {
+            showSection(sectionNum);
+        }
+    }
+    
+    // Add click handlers to buttons
+    document.querySelectorAll('.buttonsection, .bottombuttonsection').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const sectionNum = parseInt(button.getAttribute('data-section'));
+            if (!isNaN(sectionNum)) {
+                showSection(sectionNum);
+                
+                // Update URL hash
+                window.history.pushState(null, null, '#section-' + sectionNum);
+            }
+        });
+    });
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash;
+        if (hash.startsWith('#section-')) {
+            const sectionNum = parseInt(hash.replace('#section-', ''));
+            if (!isNaN(sectionNum) && sectionNum > 0) {
+                showSection(sectionNum);
+            }
+        }
+    });
+};
+
+/**
+ * Hide all sections except section 0.
+ */
+const hideAllSections = () => {
+    document.querySelectorAll('li.section.main').forEach(section => {
+        const sectionId = section.getAttribute('id');
+        if (sectionId && sectionId !== 'section-0') {
+            section.style.display = 'none';
+        }
+    });
+};
+
+/**
+ * Show a specific section.
+ *
+ * @param {number} sectionNum The section number to show
+ */
+const showSection = (sectionNum) => {
+    if (currentSection === sectionNum) {
+        return;
+    }
+    
+    currentSection = sectionNum;
+    
+    // Hide all sections except section 0
+    hideAllSections();
+    
+    // Show the selected section
+    const section = document.querySelector('#section-' + sectionNum);
+    if (section) {
+        section.style.display = 'block';
+        
+        // Scroll to section
+        setTimeout(() => {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+        
+        // Trigger H5P resize if available
+        if (window.H5P && window.H5P.externalDispatcher) {
+            setTimeout(() => {
+                window.H5P.externalDispatcher.trigger('resize');
+            }, 200);
+        }
+    }
+    
+    // Update button states
+    updateButtonStates(sectionNum);
+};
+
+/**
+ * Update button states (current/visible).
+ *
+ * @param {number} sectionNum The current section number
+ */
+const updateButtonStates = (sectionNum) => {
+    // Remove current class from all buttons
+    document.querySelectorAll('.buttonsection, .bottombuttonsection').forEach(button => {
+        button.classList.remove('buttoncurrent', 'sectionvisible', 'current');
+        button.classList.add('sectionnotvisible');
+    });
+    
+    // Add current class to active button
+    const currentButton = document.querySelector('.buttonsection[data-section="' + sectionNum + '"]');
+    if (currentButton) {
+        currentButton.classList.add('buttoncurrent', 'sectionvisible', 'current');
+        currentButton.classList.remove('sectionnotvisible');
+    }
+    
+    const currentBottomButton = document.querySelector('.bottombuttonsection[data-section="' + sectionNum + '"]');
+    if (currentBottomButton) {
+        currentBottomButton.classList.add('buttoncurrent', 'sectionvisible', 'current');
+        currentBottomButton.classList.remove('sectionnotvisible');
+    }
+};
