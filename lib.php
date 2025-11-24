@@ -372,8 +372,8 @@ class format_buttonsx extends core_courseformat\base {
                 'element_type' => 'select',
                 'element_attributes' => array(
                     array(
-                        0 => get_string('yes', 'format_buttonsx'),
-                        1 => get_string('no', 'format_buttonsx'),
+                        1 => get_string('yes', 'format_buttonsx'),
+                        0 => get_string('no', 'format_buttonsx'),
                     ),
                 ),
             );

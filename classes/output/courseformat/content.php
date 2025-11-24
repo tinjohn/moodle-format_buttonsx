@@ -109,8 +109,10 @@ class content extends content_base {
         $navdata->sections = [];
         $navdata->divisors = [];
         $navdata->iscircle = ($course->buttonstyle === 'circle');
-        $navdata->showbottommenu = (!empty($course->usebottommenu) && $course->usebottommenu == 1);
-        
+        // Show bottom menu by default (only hide if explicitly set to 0)
+        $usebottom = isset($course->usebottommenu) ? $course->usebottommenu : TRUE;
+        $navdata->showbottommenu = (bool)($usebottom != 0); // Cast to boolean for Mustache
+        $navdata->showbottommenu = $course->usebottommenu == 1 ? TRUE : FALSE; // Cast to boolean for Mustache
         $sections = $modinfo->get_section_info_all();
         $currentdivisor = 1;
         $count = 1;
@@ -164,10 +166,24 @@ class content extends content_base {
                 'isvisible' => $section->visible,
             ];
             
-            // Add to sections array for bottom menu
+            // Add to sections array for bottom menu with special classes for divisor navigation
+            $classes = [];
+            
+            // First button after divisor start (right arrow target)
+            if ($count == 1) {
+                $classes[] = 'specialbgafter';
+            }
+            
+            // Last button before divisor end (left arrow target)
+            if (isset($course->{'divisor' . $currentdivisor}) && 
+                $count == $course->{'divisor' . $currentdivisor}) {
+                $classes[] = 'specialbgbefore';
+            }
+            
             $navdata->sections[] = [
                 'num' => $section->section,
                 'text' => $buttontext,
+                'classes' => implode(' ', $classes),
             ];
             
             $count++;
