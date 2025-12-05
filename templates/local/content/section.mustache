@@ -1,0 +1,36 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    ButtonsX simplified section template without course editor state initialization.
+
+    @template format_buttonsx/local/content/section
+    @package format_buttonsx
+}}
+<li id="section-{{num}}"
+    class="section course-section main {{#onlysummary}} section-summary {{/onlysummary}} clearfix
+            {{#ishidden}} hidden {{/ishidden}} {{#iscurrent}}{{^displayonesection}} current {{/displayonesection}}{{/iscurrent}}
+            {{#isstealth}} orphaned {{/isstealth}}"
+    data-sectionid="{{num}}"
+>
+    <div class="section-item">
+        <div class="course-section-header d-flex">
+        TINAAAAA
+            {{$ core_courseformat/local/content/section/header }}
+                {{> core_courseformat/local/content/section/header }}
+            {{/ core_courseformat/local/content/section/header }}
+        </div>
+        <div class="content">
+            {{$ core_courseformat/local/content/section/content }}
+                {{> core_courseformat/local/content/section/content }}
+            {{/ core_courseformat/local/content/section/content }}
+        </div>
+    </div>
+
+    {{#insertafter}}
+        {{#numsections}}
+            {{$ core_courseformat/local/content/addsection}}
+                {{> core_courseformat/local/content/section/addsectiondivider }}
+            {{/ core_courseformat/local/content/addsection}}
+        {{/numsections}}
+    {{/insertafter}}
+</li>

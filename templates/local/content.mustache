@@ -39,14 +39,14 @@
     
     <ul class="{{format}}" data-for="course_sectionlist" id="coursecontentcollapse">
         {{#initialsection}}
-            {{$ core_courseformat/local/content/section }}
-                {{> core_courseformat/local/content/section }}
-            {{/ core_courseformat/local/content/section }}
+            {{$ format_buttonsx/local/content/section }}
+                {{> format_buttonsx/local/content/section }}
+            {{/ format_buttonsx/local/content/section }}
         {{/initialsection}}
         {{#sections}}
-            {{$ core_courseformat/local/content/section }}
-                {{> core_courseformat/local/content/section }}
-            {{/ core_courseformat/local/content/section }}
+            {{$ format_buttonsx/local/content/section }}
+                {{> format_buttonsx/local/content/section }}
+            {{/ format_buttonsx/local/content/section }}
         {{/sections}}
     </ul>
     
@@ -82,8 +82,7 @@
 </div>
 
 {{#js}}
-require(['core_courseformat/local/content', 'format_buttonsx/section'], function(component, ButtonsXSection) {
-    component.init('course-format-{{uniqid}}', {}, {{sectionreturn}});
+require(['format_buttonsx/section'], function(ButtonsXSection) {
     ButtonsXSection.init();
 });
 {{/js}}

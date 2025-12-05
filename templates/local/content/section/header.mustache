@@ -1,0 +1,22 @@
+{{!
+    ButtonsX section header without course editor state data attributes
+    @template format_buttonsx/local/content/section/header
+}}
+{{#sitehome}}
+    <div class="d-flex align-items-start position-relative">
+        <h3 class="h4 sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
+            id="sectionid-{{id}}-title">
+            {{{title}}} HALLOO
+        </h3>
+    </div>
+{{/sitehome}}
+{{^sitehome}}
+    {{^displayonesection}}
+        <div class="d-flex align-items-start position-relative">
+            <h3 class="h4 sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
+                id="sectionid-{{id}}-title">
+                {{{title}}} HALLOO SADasd
+            </h3>
+        </div>
+    {{/displayonesection}}
+{{/sitehome}}
