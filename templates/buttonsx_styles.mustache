@@ -69,16 +69,31 @@
     {{/course.displayh5picons}}
     
     {{^course.act_complinfo_position}}
-    .path-course-view.format-buttonsx .activity-grid {
-        display: flex;
-        flex-direction: column-reverse;
+    /* Override grid layout to move completion after altcontent */
+    .path-course-view.format-buttonsx .activity-item .activity-grid {
+        grid-template-columns: min-content 1fr min-content min-content;
+        grid-template-rows: 1fr repeat(6, min-content);
+        grid-template-areas: 
+            "icon   name          groupmode      actions"
+            "icon   visibility    groupmode      actions"
+            "icon   dates         groupmode      actions"
+            "icon   altcontent    altcontent     altcontent"
+            "icon   completion    completion     completion"
+            "icon   afterlink     afterlink      afterlink"
+            "icon   availability  availability   availability";
     }
-    .path-course-view.format-buttonsx .activity-grid .activity-altcontent {
-        width: 100%;
-        align-self: stretch;
-    }
-    .path-course-view.format-buttonsx .activity-grid .activity-actions {
-        align-self: flex-start;
+    @media (max-width: 575.98px) {
+        .path-course-view.format-buttonsx .activity-item .activity-grid {
+            grid-template-areas: 
+                "icon          name          actions"
+                "icon          visibility    actions"
+                "dates         dates         dates"
+                "groupmode     groupmode     groupmode"
+                "altcontent    altcontent    altcontent"
+                "completion    completion    completion"
+                "afterlink     afterlink     afterlink"
+                "availability  availability  availability";
+        }
     }
     {{/course.act_complinfo_position}}
     {{/editing}}
