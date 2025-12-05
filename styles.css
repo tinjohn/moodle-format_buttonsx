@@ -77,27 +77,28 @@
 }
 
 /* Hide all sections except section-0 initially (legacy selector) */
-.course-content ul.buttons li.section.main:not(#section-0) {
+.path-course-view.format-buttonsx .course-content ul.buttons li.section.main:not(#section-0) {
     background: none;
     list-style: none;
     display: none;
-    border: 0 !important;
+    border: 0;
+    border-width: 0;
 }
 
 /* Hide all sections except section-0 initially (Moodle 4.4 selector) */
 /* Note: NO !important so JavaScript can override with style.display */
-.path-course-view ul[data-for="course_sectionlist"] > li.section:not(#section-0) {
+.path-course-view.format-buttonsx ul[data-for="course_sectionlist"] > li.section:not(#section-0) {
     display: none;
 }
 
 /* Ensure section-0 is always visible */
-#section-0 {
-    display: block !important;
+.path-course-view.format-buttonsx #section-0 {
+    display: block;
 }
 
 /* Hide all section headers (collapse button and title) */
-.course-section-header.d-flex {
-    display: none !important;
+.path-course-view.format-buttonsx .course-section-header.d-flex {
+    display: none;
 }
 
 /* Button containers */
@@ -349,38 +350,38 @@
 
 
 /* editing - show all sections in edit mode (legacy selector) */
-.editing .course-content ul.buttons li.section.main:not(#section-0) {
-    display: block !important;
-    border-bottom: 1px dotted #dee2e6 !important;
+.path-course-view.format-buttonsx.editing .course-content ul.buttons li.section.main:not(#section-0) {
+    display: block;
+    border-bottom: 1px dotted #dee2e6;
 }
 
 /* editing - show all sections in edit mode (Moodle 4.4 selector) */
-.editing ul[data-for="course_sectionlist"] li.section:not(#section-0) {
-    display: block !important;
-    border-bottom: 1px dotted #dee2e6 !important;
+.path-course-view.format-buttonsx.editing ul[data-for="course_sectionlist"] li.section:not(#section-0) {
+    display: block;
+    border-bottom: 1px dotted #dee2e6;
 }
 
 /* Hide H5P labels and icons when configured */
-.buttonsx-hide-h5p .activity.h5pactivity .activityname {
-    display: none !important;
+.path-course-view.format-buttonsx .buttonsx-hide-h5p .activity.h5pactivity .activityname {
+    display: none;
 }
 
-.buttonsx-hide-h5p .activity.h5pactivity .contentwithoutlink {
-    display: none !important;
+.path-course-view.format-buttonsx .buttonsx-hide-h5p .activity.h5pactivity .contentwithoutlink {
+    display: none;
 }
 
-.buttonsx-hide-h5p .activity.h5pactivity .instancename {
-    display: none !important;
+.path-course-view.format-buttonsx .buttonsx-hide-h5p .activity.h5pactivity .instancename {
+    display: none;
 }
 
 /* Hide H5P activity icon */
-.buttonsx-hide-h5p .activity.h5pactivity .activityicon {
-    display: none !important;
+.path-course-view.format-buttonsx .buttonsx-hide-h5p .activity.h5pactivity .activityicon {
+    display: none;
 }
 
 /* Hide entire activity instance label area */
-.buttonsx-hide-h5p .activity.h5pactivity .activity-instance {
-    display: none !important;
+.path-course-view.format-buttonsx .buttonsx-hide-h5p .activity.h5pactivity .activity-instance {
+    display: none;
 }
 
 /* Activity completion positioning */
@@ -391,4 +392,10 @@
 
 .buttonsx-completion-left .activity .mod-indent-outer {
     padding-left: 40px;
+}
+
+/* no border - higher specificity without !important */
+.path-course-view.format-buttonsx .course-content .course-section .section-item {
+    border-width: 0;
+    border: none;
 }

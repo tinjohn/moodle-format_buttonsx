@@ -11,18 +11,20 @@
             {{#ishidden}} hidden {{/ishidden}} {{#iscurrent}}{{^displayonesection}} current {{/displayonesection}}{{/iscurrent}}
             {{#isstealth}} orphaned {{/isstealth}}"
     data-sectionid="{{num}}"
+        data-sectionreturnid="{{sectionreturnid}}"
+    data-for="section"
+    data-id="{{id}}"
+    data-number="{{num}}"
 >
     <div class="section-item">
-        <div class="course-section-header d-flex">
-        TINAAAAA
-            {{$ core_courseformat/local/content/section/header }}
-                {{> core_courseformat/local/content/section/header }}
-            {{/ core_courseformat/local/content/section/header }}
-        </div>
-        <div class="content">
-            {{$ core_courseformat/local/content/section/content }}
-                {{> core_courseformat/local/content/section/content }}
-            {{/ core_courseformat/local/content/section/content }}
+        <div class="course-section-header d-flex"
+        data-for="section_title"
+            data-id="{{id}}"
+            data-number="{{num}}"
+        >
+            {{$ format_buttonsx/local/content/section/content }}
+                {{> format_buttonsx/local/content/section/content }}
+            {{/ format_buttonsx/local/content/section/content }}
         </div>
     </div>
 
