@@ -97,8 +97,17 @@
 }
 
 /* Hide all section headers (collapse button and title) */
-.path-course-view.format-buttonsx .course-section-header.d-flex {
+.path-course-view.format-buttonsx .course-section-header.d-flex .course-section-header{
     display: none;
+}
+/* Hide all section headers (collapse button and title) */
+ .path-course-view.format-buttonsx .course-section-header{
+    background-color: transparent;
+    padding: 0;
+}
+
+.path-course-view.format-buttonsx .course-section, .path-course-view.format-buttonsx .section-item {
+padding: 0rem;
 }
 
 /* Button containers */
