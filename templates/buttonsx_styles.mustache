@@ -69,9 +69,12 @@
     {{/course.displayh5picons}}
     
     {{^course.act_complinfo_position}}
-    .activity-item {
+    .path-course-view.format-buttonsx .activity-grid {
         display: flex;
         flex-direction: column-reverse;
+    }
+    .path-course-view.format-buttonsx .align-self-start {
+        align-self: flex-end !important;
     }
     {{/course.act_complinfo_position}}
     {{/editing}}
