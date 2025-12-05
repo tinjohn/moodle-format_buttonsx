@@ -110,6 +110,14 @@
 padding: 0rem;
 }
 
+.path-course-view.format-buttonsx .activity {
+    border-top: 0px;
+}
+
+.path-course-view.format-buttonsx .activity-item .activity-altcontent.activity-description {
+border-top: 0px solid #dee2e6;
+}
+
 /* Button containers */
 #buttonsectioncontainer,
 #bottombuttonsectioncontainer {
